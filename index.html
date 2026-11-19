@@ -98,7 +98,7 @@ textarea,input{user-select:text;-webkit-user-select:text;touch-action:auto;font-
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v17 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v18 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외 맵 5종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -211,7 +211,7 @@ textarea,input{user-select:text;-webkit-user-select:text;touch-action:auto;font-
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v17</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v18</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -838,6 +838,7 @@ function startTurn(u){
   if(pd){damage(u,5);floatText(u.x,u.y-78,'독 장판','#b9f6ca');
     if(!u.alive){g.phase='between';later(900,nextTurn);return;}}
   banner(`${u.label} ${CHARS[u.type].name}(${CHARS[u.type].job}) 차례`);
+  if(g.mp&&NET.role==='host')NET.lastSnap=0;
   if(g.mp&&NET.role==='host'&&u.ctrl!==NET.myId&&!(NET.peers[u.ctrl]&&NET.peers[u.ctrl].open)){
     banner(`${u.label} 연결 끊김 · 턴을 넘깁니다`);g.phase='between';later(1300,nextTurn);return;}
   if(u.ai){g.phase='think';later(800,()=>aiTurn(u));}
@@ -1145,6 +1146,7 @@ function updateCam(dt){
   const vw=W/cam.z/2,vh=H/cam.z/2;cam.x=clamp(cam.x,vw,W-vw);cam.y=clamp(cam.y,Math.min(vh-90,H-vh),H-vh);
 }
 function update(dt){
+  fireHoldTick();
   if(g.remote)guestSmooth(dt);
   for(const v of g.units){if(!v.alive)continue;const t=tiltOf(v);v.tilt=v.tilt==null?t:v.tilt+(t-v.tilt)*Math.min(1,dt*10);}
   updateCam(dt);updateWater(dt);decoFx();
@@ -1479,7 +1481,11 @@ holdBtn($('bL'),()=>dirDown('left',-1),()=>dirUp('left'));
 holdBtn($('bR'),()=>dirDown('right',1),()=>dirUp('right'));
 holdBtn($('bU'),()=>dirDown('up',0),()=>dirUp('up'));
 holdBtn($('bD'),()=>dirDown('down',0),()=>dirUp('down'));
-function fireDown(){
+let fireHeld=false;
+// 차례가 오기 직전·직후에 누른 발사 버튼도 놓치지 않음: 누르고 있으면 내 차례가 확인되는 순간 힘 모으기 시작
+function fireHoldTick(){if(!fireHeld||!g||g.mode==='penalty'||g.charging||g.fired||!humanAim())return;
+  if(NET.role==='guest'&&(NET.lc||performance.now()-(NET.lcHold||0)<800))return;fireDown();}
+function fireDown(){fireHeld=true;
   if(NET.role==='guest'){if(humanAim()&&!g.charging){netSend(NET.dc,{t:'fd'});if(g.mode!=='penalty'){NET.lc=true;g.charging=true;g.charge=0;}}return;}
   doFireDown(NET.myId);
 }
@@ -1491,7 +1497,7 @@ function doFireDown(ctrl){
 function guestLocalShot(pw){const u=g.cur;if(!u)return;const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,v=clamp(pw,5,100)*(inWater(u)?0.85:1)/100*VMAX*c.spd,hp=handPos(u);
   g.proj={x:hp.x,y:hp.y,trail:[],type:u.type,spin:0,boost:g.boost,_local:true,_lt:performance.now(),_lvx:Math.cos(a)*u.facing*v,_lvy:-Math.sin(a)*v};
   u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();}
-function fireUp(){if(NET.role==='guest'){if(NET.lc&&g){guestSync();const pw=Math.round(g.charge*10)/10;netSend(NET.dc,{t:'fu',p:pw,a:g.cur?Math.round(g.cur.angle*10)/10:null});NET.lc=false;NET.lcHold=performance.now();g.charging=false;guestLocalShot(pw);}else netSend(NET.dc,{t:'fu'});return;}doFireUp(NET.myId);}
+function fireUp(){const was=fireHeld;fireHeld=false;if(NET.role==='guest'){if(NET.lc&&g){guestSync();const pw=Math.round(g.charge*10)/10;netSend(NET.dc,{t:'fu',p:pw,a:g.cur?Math.round(g.cur.angle*10)/10:null});NET.lc=false;NET.lcHold=performance.now();g.charging=false;guestLocalShot(pw);}else if(was)netSend(NET.dc,{t:'fu'});return;}if(was)doFireUp(NET.myId);}
 function doFireUp(ctrl,p,a){if(!g||!canCtrl(ctrl))return;
   if(p!=null&&isFinite(p)&&g.mode!=='penalty'){if(a!=null&&isFinite(a))g.cur.angle=clamp(+a,0,90);fireShot(clamp(+p,0,100));return;}
   if(g.charging)fireShot(g.charge);}
@@ -2203,6 +2209,7 @@ function applySnap(s){
   const loc=NET.lc||(performance.now()-(NET.lcHold||0)<800&&!s.fd);
   if(!loc){g.charging=!!s.ch;g.charge=s.cg;}if(s.ph!=='aim'||s.fd)NET.lc=false;g.shotsLeft=s.sl;g.extraUsed=!!s.xu;g.target=s.tg>=0?g.units[s.tg]:null;
   const own=s.ph==='aim'&&g.cur&&g.cur.ctrl===NET.myId;const first=own&&!NET.ownT;NET.ownT=own;
+  if(first&&!NET.lc){NET.lcHold=0;g.charging=false;g.charge=0;}
   const mine=own&&!first;if(!mine)g.moveLeft=s.ml;
   s.u.forEach((a,i)=>{const u=g.units[i];if(!u)return;const me=mine&&u===g.cur;if(!me&&(u._tx==null||Math.abs(a[0]-u.x)>80||Math.abs(a[1]-u.y)>80)){u.x=a[0];u.y=a[1];}u._tx=me?u.x:a[0];u._ty=me?u.y:a[1];u.hp=a[2];u.alive=!!a[3];if(!me){u.facing=a[4];u.angle=a[5];}u.lastPower=a[6];
     u.throwT=a[7]?0.1:0;u.hurtT=a[8]?0.2:0;u.items={bomb:a[9],penalty:a[10],triple:a[11],heal:0};});
