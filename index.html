@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>동물 포트리스</title>
+<title>Safari War</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 html,body{width:100%;height:100%;overflow:hidden;background:#111;font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:#fff;touch-action:none}
@@ -139,8 +139,8 @@ body.port .cpu{flex:1;text-align:center}
 </div>
 
 <div class="ov" id="title"><div class="panel">
-  <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v31 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <h1>🐾 Safari War</h1>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v32 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -265,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v31</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v32</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -2038,9 +2038,9 @@ function saveMerged(){
   const i=SRC_HTML.indexOf('<scr'+'ipt>\n(()=>{');if(i<0){$('photoMsg').textContent='파일을 만들지 못했습니다.';return;}
   const html=SRC_HTML.slice(0,i)+tag+SRC_HTML.slice(i);
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
-  a.download='동물포트리스_실사.html';document.body.appendChild(a);a.click();
+  a.download='Safari_War.html';document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
-  $('photoMsg').textContent='"동물포트리스_실사.html" 파일을 저장했습니다. 이 파일 하나만 휴대폰에 옮겨도 실사로 실행됩니다.';
+  $('photoMsg').textContent='"Safari_War.html" 파일을 저장했습니다. 이 파일 하나만 휴대폰에 옮겨도 실사로 실행됩니다.';
 }
 function bindOpt(id,key){$(id).addEventListener('change',e=>{settings[key]=e.target.checked;store.set(key,settings[key]);});}
 bindOpt('optShake','shake');bindOpt('optSound','sound');bindOpt('optShake2','shake');bindOpt('optSound2','sound');bindOpt('optCam','cam');bindOpt('optCam2','cam');bindOpt('optVib','vib');bindOpt('optVib2','vib');

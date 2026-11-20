@@ -1,6 +1,6 @@
-# anipo (동물포트리스)
+# Safari War (anipo)
 
-동물 8종 포트리스형 HTML 게임.
+동물 10종이 각도와 힘으로 포탄을 쏘아 겨루는 HTML 게임. 혼자하기 · 연습장 · 같이하기(2~4인).
 
 - 바로 하기: https://moolpaas81-ui.github.io/anipo/
 - 같은 파일: https://moolpaas81-ui.github.io/anipo/anipo.html
