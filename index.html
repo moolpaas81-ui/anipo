@@ -71,6 +71,8 @@ textarea,input{user-select:text;-webkit-user-select:text;touch-action:auto;font-
 .mpSlots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
 .mpSlot{width:168px;min-height:84px;border-radius:12px;background:#11151c;border:2px solid #475163;display:flex;align-items:center;gap:8px;padding:6px 8px;text-align:left;position:relative}
 .mpSlot .pic{width:56px;height:56px;border-radius:10px;background:#2a3140;flex:none;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden}
+.mpSlot .kick{position:absolute;right:4px;bottom:4px;font-size:11px;padding:2px 7px;border-radius:7px;border:1px solid #6b3a3a;background:#2a1717;color:#ffab91;cursor:pointer}
+.mpSlot .kick.sure{background:#c62828;color:#fff;border-color:#c62828}
 .mpSlot .pic img{width:100%;height:100%;object-fit:cover}
 .mpSlot .tag{position:absolute;top:-9px;left:10px;font-size:11px;font-weight:700;padding:1px 8px;border-radius:8px;color:#111}
 .mpSlot .nm{font-weight:700;font-size:15px;line-height:1.2}.mpSlot .an{font-size:12px;color:#c9d3e0}.mpSlot .st{font-size:11px;margin-top:2px}
@@ -98,7 +100,7 @@ textarea,input{user-select:text;-webkit-user-select:text;touch-action:auto;font-
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v19 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v20 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외 맵 5종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -211,7 +213,7 @@ textarea,input{user-select:text;-webkit-user-select:text;touch-action:auto;font-
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v19</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v20</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -2043,7 +2045,10 @@ function renderMpSlots(){
     if(p){const me=p.id===NET.myId,c=CHARS[p.type]||{};
       d.style.borderColor=PCOL[i];
       d.innerHTML=`<span class="tag" style="background:${col}">${label}${me?' · 나':''}</span><div class="pic" style="box-shadow:0 0 0 2px ${PCOL[i]}">${slotPic(p.type)}</div>
-        <div><div class="nm" style="color:${PCOL[i]}">${p.name}</div><div class="an">${c.emoji||''} ${c.name||''}</div><div class="st" style="color:#8BC34A">● ${i===0?'방 만듦':'참가 완료'}</div></div>`;}
+        <div><div class="nm" style="color:${PCOL[i]}">${p.name}</div><div class="an">${c.emoji||''} ${c.name||''}</div><div class="st" style="color:#8BC34A">● ${i===0?'방 만듦':'참가 완료'}</div></div>`;
+      if(NET.role==='host'&&p.id!==0){const k=document.createElement('button');k.className='kick';k.textContent='내보내기';
+        k.addEventListener('click',()=>{if(k.dataset.sure){kickPeer(p.id);return;}k.dataset.sure=1;k.textContent='정말?';k.classList.add('sure');
+          setTimeout(()=>{if(k.isConnected){delete k.dataset.sure;k.textContent='내보내기';k.classList.remove('sure');}},3000);});d.appendChild(k);}}
     else if(NET.role==='host'&&reqs[ri]){const r=reqs[ri++],c=CHARS[r.type]||{};d.classList.add('wait');
       d.innerHTML=`<span class="tag" style="background:#FFD54F">${label}</span><div class="pic">${slotPic(r.type)}</div>
         <div><div class="nm">${r.name}</div><div class="an">${c.emoji||''} ${c.name||''}</div><div class="st" style="color:#FFD54F">🙋 참가 요청 중 · 아래 [수락]</div></div>`;}
@@ -2052,6 +2057,14 @@ function renderMpSlots(){
     else{d.classList.add('empty');
       d.innerHTML=`<span class="tag" style="background:#90A4AE">${label}</span><div class="pic" style="font-size:22px;color:#6f7b90">＋</div><div><div class="nm" style="color:#8f9bb0">빈 자리</div><div class="st" style="color:#6f7b90">참가 기다리는 중</div></div>`;}
     box.appendChild(d);}
+}
+function devId(){let d=store.get('devId','');if(!d){d=Math.random().toString(36).slice(2,12);store.set('devId',d);}return d;}   // 기기 구분용
+function kickPeer(id){   // 방장: 대기실에서 참가자 내보내기
+  const P=NET.peers[id];if(!P||NET.role!=='host')return;
+  LAN.banned=LAN.banned||new Set();if(P.dev)LAN.banned.add(P.dev);
+  try{netSend(P.dc,{t:'kick'});}catch(e){}
+  const nm=P.name;P.open=false;delete NET.peers[id];if(P.cid&&LAN.relay)delete LAN.relay[P.cid];lobbyRefresh();lbStatus(`${nm} 님을 내보냈습니다`);
+  setTimeout(()=>{try{P.dc&&P.dc.close&&P.dc.close();}catch(e){}try{P.pc&&P.pc.close();}catch(e){}},400);
 }
 function lobbyRefresh(){
   if(NET.role==='host'){
@@ -2135,11 +2148,12 @@ function guestOnMsg(m){
   else if(m.t==='tolobby')toLobby();
   else if(m.t==='chat')showChat(m.id,m.name,m.m);
   else if(m.t==='bye')onHostLost(true);
+  else if(m.t==='kick')onHostLost('kick');
 }
 function onHostLost(byeMsg){
   if(NET.role!=='guest')return;if(!byeMsg&&NET._bye)return;NET._bye=!!byeMsg;NET.dc=null;$('chatBox').classList.add('hide');
   if(g&&g.mp)g.phase='over';
-  hideAll();show('result');$('resTitle').textContent='연결이 끊겼습니다';$('resMsg').textContent=byeMsg===true?'방장이 게임을 나갔습니다. 다시 방을 만들거나 참가해 주세요.':'방장과의 연결이 끊겼습니다. 다시 참가해 주세요.';
+  hideAll();show('result');$('resTitle').textContent='연결이 끊겼습니다';$('resMsg').textContent=byeMsg==='kick'?'방장이 대기실에서 내보냈습니다.':byeMsg===true?'방장이 게임을 나갔습니다. 다시 방을 만들거나 참가해 주세요.':'방장과의 연결이 끊겼습니다. 다시 참가해 주세요.';
   const btns=$('resBtns');btns.innerHTML='';const b=document.createElement('button');b.className='b pri';b.textContent='대전 화면으로';b.addEventListener('click',openLobby);btns.appendChild(b);
 }
 function netLeave(){
@@ -2156,7 +2170,10 @@ function toLobby(){g=null;hideAll();show('lobby');showRoom();}
 function hostStartMatch(){
   setTimeout(()=>{try{lanAnnounce();}catch(e){}},300);
   lobbyRefresh();if(NET.players.length<2)return;
-  const cfg={t:'start',seed:(Date.now()&0xffff),mi:NET.mi,players:NET.players,wind:40};
+  const n=NET.players.length,base=NET.players.map((_,k)=>70+k*(660/(n-1)));
+  for(let k=n-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[base[k],base[j]]=[base[j],base[k]];}   // 자리 섞기
+  const xs=base.map(x=>Math.round(clamp(x+(Math.random()*40-20),40,760)));
+  const cfg={t:'start',seed:(Date.now()&0xffff),mi:NET.mi,players:NET.players,wind:40,xs,first:Math.floor(Math.random()*n)};
   netBroadcast(cfg);startMatch(cfg);
 }
 function startMatch(cfg){
@@ -2167,9 +2184,10 @@ function startMatch(cfg){
      campaign:false,boost:false,extraUsed:false,itemUsed:false,fired:false,moveLeft:MOVE_BUDGET,charging:false,charge:0,target:null,aiPower:0,lastSec:99,sig:''};
   bg=mp.bg;terrainArt=mp.art;g.deco=mp.deco;
   {const hs=Array.from(g.h).sort((p,q)=>p-q);g.T=hs[Math.floor(hs.length*0.6)];}
-  cfg.players.forEach((p,i)=>{let x=n===1?400:70+i*(660/(n-1));for(let k=0;k<30&&inLake(x);k++)x+=x<400?8:-8;const u=mkUnit('m'+p.id,CHARS[p.type]?p.type:'tiger',i,x);
+  cfg.players.forEach((p,i)=>{let x=cfg.xs&&cfg.xs[i]!=null?cfg.xs[i]:(n===1?400:70+i*(660/(n-1)));for(let k=0;k<30&&inLake(x);k++)x+=x<400?8:-8;const u=mkUnit('m'+p.id,CHARS[p.type]?p.type:'tiger',i,x);
     u.ai=false;u.ctrl=p.id;u.label=p.name;u.color=PCOL[i];u.facing=x<400?1:-1;u.y=groundAt(x);g.units.push(u);});
   clearObsNearUnits();
+  g.turnIdx=(cfg.first||0)-1;   // 첫 차례도 무작위
   NET.remoteInp={};NET.ev=[];inp.left=inp.right=inp.up=inp.down=false;
   hideAll();resize();
   banner(`대전 시작! ${n}명 · ${MAPS[mi].name}`);
@@ -2288,7 +2306,7 @@ function mkRelay(topic){return{readyState:'open',_l:0,onmessage:null,
   close(){this.readyState='closed';}};}
 function lanRelayHost(r,P){
   try{P.pc.close();}catch(e){}if(NET.pending===P)NET.pending=null;
-  const id=NET.nextId++,base=LT+'r/'+LAN.rid+'/d/',dc=mkRelay(base+'g/'+r.cid),Q={id,pc:null,dc,open:false,name:r.name,type:r.type||'tiger',relay:true};
+  const id=NET.nextId++,base=LT+'r/'+LAN.rid+'/d/',dc=mkRelay(base+'g/'+r.cid),Q={id,cid:r.cid,dev:r.dev,pc:null,dc,open:false,name:r.name,type:r.type||'tiger',relay:true};
   dc.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch(err){return;}if(!NET.peers[id])NET.peers[id]=Q;hostOnMsg(id,m);};
   NET.peers[id]=Q;LAN.relay[r.cid]=Q;LAN.c.sub(base+'h/'+r.cid);
   setTimeout(()=>{if(LAN.c)LAN.c.pub(LT+'r/'+LAN.rid+'/g/'+r.cid,JSON.stringify({t:'relay'}));},300);
@@ -2325,7 +2343,7 @@ async function lanHostStart(){
 function lanAnnounce(){if(!LAN.c||!LAN.key||NET.role!=='host')return;const n=(NET.players||[]).length||1;
   LAN.c.pub(LT+'k/'+LAN.key+'/'+LAN.rid,JSON.stringify({n:NET.name,c:n,a:CHARS[NET.myType]?CHARS[NET.myType].emoji:'',p:!!(g&&g.mp),t:Date.now()}),true);}
 function lanHostMsg(o){
-  if(o.t==='req'&&o.cid){if(LAN.reqs.some(r=>r.cid===o.cid))return;LAN.reqs.push({cid:o.cid,name:String(o.name||'참가자').slice(0,6),type:o.type});renderReqs();}
+  if(o.t==='req'&&o.cid){if(LAN.banned&&o.dev&&LAN.banned.has(o.dev)){LAN.c.pub(LT+'r/'+LAN.rid+'/g/'+o.cid,JSON.stringify({t:'no'}));return;}if(LAN.reqs.some(r=>r.cid===o.cid))return;LAN.reqs.push({cid:o.cid,dev:o.dev,name:String(o.name||'참가자').slice(0,6),type:o.type});renderReqs();}
   else if(o.t==='ans'&&o.cid&&LAN.busy===o.cid&&(o.sdp||o.code)){hostAcceptAnswer(o.sdp?{type:'answer',sdp:o.sdp}:o.code);}
   else if(o.t==='leave'&&o.cid&&LAN.relay[o.cid]){const P=LAN.relay[o.cid];delete LAN.relay[o.cid];delete NET.peers[P.id];lobbyRefresh();}
   else if(o.t==='cancel'&&o.cid){LAN.reqs=LAN.reqs.filter(r=>r.cid!==o.cid);renderReqs();}
@@ -2341,7 +2359,7 @@ async function lanAccept(r){
   if(LAN.busy||!LAN.c)return;LAN.busy=r.cid;renderReqs();
   await hostInvite();hideBoxes();const code=NET.lastCode;
   if(!code||!LAN.c){LAN.busy=null;renderReqs();return;}
-  const P=NET.pending;if(!window.__ABF_NODIRECT)LAN.c.pub(LT+'r/'+LAN.rid+'/g/'+r.cid,JSON.stringify({t:'offer',sdp:P.pc.localDescription.sdp}));lbStatus(`${r.name} 님과 연결하는 중…`);
+  const P=NET.pending;if(P){P.cid=r.cid;P.dev=r.dev;}if(!window.__ABF_NODIRECT)LAN.c.pub(LT+'r/'+LAN.rid+'/g/'+r.cid,JSON.stringify({t:'offer',sdp:P.pc.localDescription.sdp}));lbStatus(`${r.name} 님과 연결하는 중…`);
   const iv=setInterval(()=>{ // 연결되면 요청 목록에서 지움 · 25초 넘으면 다시 수락할 수 있게
     const done=P&&P.dc&&P.dc.readyState==='open',late=Date.now()-t0>8000;
     if(done||late||LAN.busy!==r.cid){clearInterval(iv);if(LAN.busy===r.cid)LAN.busy=null;LAN.reqs=LAN.reqs.filter(x=>x.cid!==r.cid);
@@ -2386,7 +2404,7 @@ function lanJoin(rid,hostName){
   if(LAN.cid&&LAN.joinRid)LAN.c.pub(LT+'r/'+LAN.joinRid+'/h',JSON.stringify({t:'cancel',cid:LAN.cid}));
   const cid='g'+Math.random().toString(36).slice(2,10);LAN.cid=cid;LAN.joinRid=rid;
   LAN.c.sub(LT+'r/'+rid+'/g/'+cid);
-  setTimeout(()=>{if(LAN.c&&LAN.cid===cid)LAN.c.pub(LT+'r/'+rid+'/h',JSON.stringify({t:'req',cid,name:NET.name,type:NET.myType}));},300);
+  setTimeout(()=>{if(LAN.c&&LAN.cid===cid)LAN.c.pub(LT+'r/'+rid+'/h',JSON.stringify({t:'req',cid,dev:devId(),name:NET.name,type:NET.myType}));},300);
   lanMsg(`🙋 ${hostName} 님에게 참가를 요청했습니다 · 방장이 [수락]을 누르면 연결됩니다`);renderRooms();
   setTimeout(()=>{if(LAN.cid===cid&&!(NET.dc&&NET.dc.readyState==='open')){lanMsg('방장이 아직 수락하지 않았습니다 · 다시 [접속]을 누르거나 방장에게 알려 주세요');LAN.cid=null;renderRooms();}},40000);
 }
