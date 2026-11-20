@@ -98,7 +98,7 @@ textarea,input{user-select:text;-webkit-user-select:text;touch-action:auto;font-
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v18 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v19 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외 맵 5종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -211,7 +211,7 @@ textarea,input{user-select:text;-webkit-user-select:text;touch-action:auto;font-
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v18</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v19</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -843,6 +843,7 @@ function startTurn(u){
     banner(`${u.label} 연결 끊김 · 턴을 넘깁니다`);g.phase='between';later(1300,nextTurn);return;}
   if(u.ai){g.phase='think';later(800,()=>aiTurn(u));}
 }
+function aimSecret(u){return !!(g&&g.mp&&u&&!u.ai&&u.ctrl!==NET.myId);}
 function canCtrl(ctrl){return !!g&&!g.paused&&g.phase==='aim'&&!!g.cur&&!g.cur.ai&&g.cur.ctrl===ctrl;}
 function humanAim(){return canCtrl(NET.myId);}
 
@@ -1300,7 +1301,7 @@ function render(){
   drawLakes(ctx,true);
   // 조준선
   const u=g.cur;
-  if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'){
+  if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'&&!aimSecret(u)){
     const ea=effAngle(u),a=ea*Math.PI/180,hp0=handPos(u),sx=hp0.x,sy=hp0.y;
     ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
     ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+Math.cos(a)*u.facing*55,sy-Math.sin(a)*55);ctx.stroke();ctx.setLineDash([]);
@@ -1355,9 +1356,10 @@ function drawUnit(u){
     return;
   }
   const bt=u.tilt||0;c.fillStyle=u.color;c.globalAlpha=0.9;c.beginPath();c.ellipse(u.x,u.y,13,3.6,bt,0,7);c.fill();c.globalAlpha=1;
-  let arm=u.angle*Math.PI/180,bottle=true;
+  const hid=aimSecret(u)&&g.phase==='aim';
+  let arm=(hid?45:u.angle)*Math.PI/180,bottle=true;
   const isCur=g.cur===u;
-  if(isCur&&g.charging)arm+=(g.charge/100)*2.2;
+  if(isCur&&g.charging&&!hid)arm+=(g.charge/100)*2.2;
   if(u.throwT>0){arm-=0.35;bottle=false;}
   if(!isCur){arm=-0.9;bottle=false;}
   if(isCur&&g.phase==='flying')bottle=false;
@@ -1417,8 +1419,8 @@ function drawHud(){
     if(g.extraUsed)tags.push('정타 보너스');
     if(tags.length){c.font=`bold 11px ${FONT}`;c.fillStyle='#FFD54F';c.fillText(tags.join(' · '),W/2,42);}
   }
-  // 힘 막대, 이동량
-  if(u&&!u.ai){
+  // 힘 막대, 이동량 (같이하기에서는 내 차례에만)
+  if(u&&!u.ai&&!aimSecret(u)){
     const x=10,y=H-22,w=220;
     c.fillStyle='rgba(0,0,0,.5)';rr(c,x-4,y-14,w+70,32,6);c.fill();
     c.fillStyle='#333';c.fillRect(x,y,w,9);
