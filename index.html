@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v26 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v27 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -198,7 +198,7 @@ body.port .cpu{flex:1;text-align:center}
     <tr><td>코끼리</td><td>대형 폭탄</td><td>상</td><td>70</td><td>폭발 반경 최대, 탄속 느림</td></tr>
     <tr><td>거북이</td><td>중포탄</td><td>상</td><td>70</td><td>받는 피해 20% 감소</td></tr>
     <tr><td>호랑이</td><td>3발 동시탄</td><td>중</td><td>90</td><td>한 번에 3발이 부채꼴로 동시에 날아감(발당 피해 작음)</td></tr>
-    <tr><td>고슴도치</td><td>가시 파편탄</td><td>중</td><td>90</td><td>맞은 곳 주변으로 가시가 튀어 추가 피해</td></tr>
+    <tr><td>고슴도치</td><td>가시 18발</td><td>중</td><td>90</td><td>등에서 가시 18발이 부채꼴로 한꺼번에 날아감. 발당 피해 약 3, 많이 맞힐수록 큰 피해(정타 보너스 없음)</td></tr>
     <tr><td>두더지</td><td>굴착탄</td><td>중</td><td>90</td><td>땅을 깊게 파고 폭발</td></tr>
     <tr><td>독수리</td><td>돌 투하</td><td>중</td><td>90</td><td>각도·힘으로 쏘면 독수리가 돌을 들고 포탄 길을 따라 날아가 가장 높은 곳에서 떨굼(떨어지는 곳은 포탄과 같음). 바람 영향 적음</td></tr>
     <tr><td>뱀</td><td>독 장판탄</td><td>하</td><td>110</td><td>맞은 곳에 독 장판(2바퀴 동안 서 있으면 -5)</td></tr>
@@ -263,7 +263,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v26</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v27</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -318,7 +318,7 @@ const FONT='"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif';
 const CHARS={
   eagle:{name:'독수리',job:'돌 투하',emoji:'🦅',hp:90,grade:2,dmg:22,rad:20,spd:1.12,wind:0.3,carry:true,size:48,fx:'돌을 들고 포탄처럼 날아가 가장 높은 곳에서 떨굼 · 바람 영향 적음'},
   elephant:{name:'코끼리',job:'대형 폭탄',emoji:'🐘',hp:70,grade:3,dmg:34,rad:38,spd:0.9,wind:1,size:62,fx:'파워 상 · 폭발 반경 최대'},
-  hedgehog:{name:'고슴도치',job:'가시 파편탄',emoji:'🦔',hp:90,grade:2,dmg:20,rad:24,spd:1,wind:1,splash:true,size:40,fx:'파워 중 · 가시 파편 추가 피해'},
+  hedgehog:{name:'고슴도치',job:'가시 18발',emoji:'🦔',hp:90,grade:2,dmg:3,rad:9,spd:1,wind:1,volley:18,size:40,fx:'등에서 가시 18발을 부채꼴로 발사 · 발당 피해 작음'},
   mole:{name:'두더지',job:'굴착탄',emoji:'🐹',hp:90,grade:2,dmg:24,rad:26,spd:1,wind:1,dig:true,size:36,fx:'파워 중 · 땅을 깊게 팜'},
   turtle:{name:'거북이',job:'중포탄',emoji:'🐢',hp:70,grade:3,dmg:30,rad:28,spd:0.95,wind:1,armor:0.8,size:44,fx:'파워 상 · 받는 피해 -20%'},
   bat:{name:'박쥐',job:'흡혈탄 투하',emoji:'🦇',hp:110,grade:1,dmg:16,rad:22,spd:1.05,wind:1,leech:0.05,carry:true,size:41,fx:'흡혈탄을 들고 포탄처럼 날아가 가장 높은 곳에서 떨굼 · 준 피해 5% 회복'},
@@ -598,7 +598,8 @@ function drawBottle(c,type,len){
       c.fillStyle='rgba(255,255,255,.25)';c.beginPath();c.arc(-1*k,-1.5*k,1.4*k,0,7);c.fill();break;
     case 'elephant':c.fillStyle='#222';c.beginPath();c.arc(0,0,6*k,0,7);c.fill();c.fillStyle='rgba(255,255,255,.3)';c.beginPath();c.arc(-2*k,-2*k,2*k,0,7);c.fill();
       c.strokeStyle='#C8A060';c.lineWidth=1.2*k;c.beginPath();c.moveTo(4*k,-4*k);c.lineTo(6.5*k,-7*k);c.stroke();c.fillStyle='#FFB300';c.beginPath();c.arc(6.8*k,-7.3*k,1.5*k,0,7);c.fill();break;
-    case 'hedgehog':c.fillStyle='#6D4C2E';for(let i=0;i<10;i++){const a=i*Math.PI/5;c.beginPath();c.moveTo(Math.cos(a)*7*k,Math.sin(a)*7*k);c.lineTo(Math.cos(a+0.3)*3.5*k,Math.sin(a+0.3)*3.5*k);c.lineTo(Math.cos(a-0.3)*3.5*k,Math.sin(a-0.3)*3.5*k);c.closePath();c.fill();}
+    case 'hedgehog':c.strokeStyle='#4E342E';c.lineWidth=1.6*k;c.lineCap='round';c.beginPath();c.moveTo(-6*k,0);c.lineTo(6*k,0);c.stroke();c.fillStyle='#EFEBE9';c.beginPath();c.moveTo(8*k,0);c.lineTo(5*k,-1.2*k);c.lineTo(5*k,1.2*k);c.closePath();c.fill();break;
+    case 'hedgehog_old':c.fillStyle='#6D4C2E';for(let i=0;i<10;i++){const a=i*Math.PI/5;c.beginPath();c.moveTo(Math.cos(a)*7*k,Math.sin(a)*7*k);c.lineTo(Math.cos(a+0.3)*3.5*k,Math.sin(a+0.3)*3.5*k);c.lineTo(Math.cos(a-0.3)*3.5*k,Math.sin(a-0.3)*3.5*k);c.closePath();c.fill();}
       c.fillStyle='#8B5E3C';c.beginPath();c.arc(0,0,4*k,0,7);c.fill();break;
     case 'mole':c.fillStyle='#6D4C41';c.beginPath();c.moveTo(-5*k,-2*k);c.quadraticCurveTo(-2*k,-6*k,3*k,-4*k);c.quadraticCurveTo(7*k,-1*k,4*k,4*k);c.quadraticCurveTo(-1*k,6*k,-5*k,3*k);c.closePath();c.fill();
       c.fillStyle='#A1887F';c.beginPath();c.arc(-1*k,-1*k,1.3*k,0,7);c.arc(2*k,1.5*k,1*k,0,7);c.fill();break;
@@ -1106,6 +1107,9 @@ function fireShot(power,isBurst){
   g.boost=false;g.phase='flying';u.throwT=0.3;sfx.throw();
   if(!isBurst){sfx.cry(u.type);netEv(['s','cry',u.type]);floatText(u.x,u.y-sprH(u.type)-22,CRY_TXT[u.type]||'',u.color||'#fff');}
   g.extra=[];
+  if(c.volley){const bx=u.x-u.facing*uW(u)*0.3,by=u.y-uH(u)*0.85;g.proj.x=bx;g.proj.y=by;g.proj.spine=true;g.burstDirect=false;
+    for(let i=1;i<c.volley;i++){const d=(Math.random()*2-1)*9,a2=a+d*Math.PI/180,k=0.94+Math.random()*0.12;
+      g.extra.push({x:bx+(Math.random()-0.5)*10,y:by+(Math.random()-0.5)*6,vx:Math.cos(a2)*u.facing*v*k,vy:-Math.sin(a2)*v*k,type:u.type,owner:u,boost:g.proj.boost,age:0,spin:0,trail:[],spine:true});}}
   if(!isBurst&&c.burst){g.burstDirect=false;const bst=g.proj.boost;
     for(const d of [-3,3]){const a2=a+d*Math.PI/180,k=d<0?0.97:1.03;g.extra.push({x:hp.x,y:hp.y,vx:Math.cos(a2)*u.facing*v*k,vy:-Math.sin(a2)*v*k,type:u.type,owner:u,boost:bst,age:0,spin:d,trail:[]});}}
 }
@@ -1166,6 +1170,13 @@ function explode(p,hitUnit){
 }
 function blast(p,hitUnit){
   const c=CHARS[p.type],mul=p.boost?1.3:1,dmg=c.dmg*mul,rad=c.rad*mul,ex=p.x,ey=p.y;
+  if(c.volley){   // 가시 한 발: 작은 구멍, 작은 피해(합계는 턴 끝에 표시), 작은 튐
+    carve(ex,ey,rad*0.6);
+    for(const u of g.units){if(!u.alive)continue;let d=0;if(u===hitUnit)d=dmg;else{const dist=Math.hypot(u.x-ex,(u.y-uH(u)/2)-ey);if(dist<=rad)d=dmg*(1-0.5*dist/rad);}
+      if(d>0){const a0=damage(u,d,false,true);u._vd=(u._vd||0)+a0;}}
+    for(let i=0;i<4;i++){const a=-Math.PI*Math.random();g.parts.push({kind:'shard',x:ex,y:ey,vx:Math.cos(a)*90,vy:Math.sin(a)*90,life:0.35,max:1,color:'#6D4C41',size:2.5,rot:a,vr:0});}
+    if(!g._xb)boom(ex,ey,10,p.type,1,false);
+    return false;}
   carve(ex,ey,rad*0.75);
   if(c.dig){carve(ex,ey+rad*0.7,rad*0.95);carve(ex,ey+rad*1.3,rad*0.7);}
   const direct=!!hitUnit&&hitUnit.team!==p.owner.team;
@@ -1217,10 +1228,10 @@ function penaltyHit(p){
   boom(p.tx,p.ty,18,p.type,2,false);
   g.phase='settle';later(800,()=>resolveShot(false));
 }
-function damage(u,amt,raw){
+function damage(u,amt,raw,quiet){
   if(!u.alive||(g&&g.range))return 0;
   let a=amt;if(!raw&&CHARS[u.type].armor)a*=CHARS[u.type].armor;a=Math.round(a);if(a<=0)return 0;
-  u.hp=Math.max(0,u.hp-a);u.hurtT=0.45;floatText(u.x,u.y-64,'-'+a,'#FF5252');
+  u.hp=Math.max(0,u.hp-a);u.hurtT=0.45;if(!quiet)floatText(u.x,u.y-64,'-'+a,'#FF5252');
   if(u.hp<=0){u.alive=false;floatText(u.x,u.y-76,'KO','#ffffff');sfx.ko();}
   return a;
 }
@@ -1229,6 +1240,7 @@ function resolveShot(direct){
   if(checkEnd())return;
   const u=g.cur;
   if(g.extra&&g.extra.length){later(120,()=>resolveShot(direct));return;}
+  for(const v of g.units)if(v._vd){floatText(v.x,v.y-70,'가시 -'+v._vd,'#FF5252');v._vd=0;}
   if(!u.alive){g.burstLeft=0;g.phase='between';later(400,nextTurn);return;}
   if(g.burstLeft>0){g.burstDirect=g.burstDirect||direct;g.burstLeft--;g.phase='flying';
     later(200,()=>{if(g&&g.cur===u&&u.alive&&g.phase!=='over'){u.angle=clamp(u.angle+(Math.random()*4-2),0,90);fireShot(u.lastPower,true);}});return;}
@@ -1574,6 +1586,8 @@ function render(){
   // 날아가는 술병
   for(const p of [g.proj].concat(g.extra||[])){
   if(p){
+    if(p.type==='hedgehog'){const L=p.trail[p.trail.length-2]||p.trail[p.trail.length-1];const ang=L?Math.atan2(p.y-L.y,p.x-L.x):(p.spin||0);
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(ang);ctx.translate(-8,0);drawBottle(ctx,p.type,16);ctx.restore();continue;}
     for(const t of p.trail){ctx.fillStyle=BOT[p.type].liq;ctx.globalAlpha=Math.max(0,t.l/0.4)*0.7;ctx.beginPath();ctx.arc(t.x,t.y,1.6,0,7);ctx.fill();}
     ctx.globalAlpha=1;
     if(p.homing){ctx.fillStyle='rgba(255,60,60,.35)';ctx.beginPath();ctx.arc(p.x,p.y,10,0,7);ctx.fill();}
