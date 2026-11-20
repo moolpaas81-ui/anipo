@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v23 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v24 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -200,7 +200,7 @@ body.port .cpu{flex:1;text-align:center}
     <tr><td>호랑이</td><td>3발 동시탄</td><td>중</td><td>90</td><td>한 번에 3발이 부채꼴로 동시에 날아감(발당 피해 작음)</td></tr>
     <tr><td>고슴도치</td><td>가시 파편탄</td><td>중</td><td>90</td><td>맞은 곳 주변으로 가시가 튀어 추가 피해</td></tr>
     <tr><td>두더지</td><td>굴착탄</td><td>중</td><td>90</td><td>땅을 깊게 파고 폭발</td></tr>
-    <tr><td>독수리</td><td>정밀 직사탄</td><td>중</td><td>90</td><td>바람 영향 적음, 탄속 빠름</td></tr>
+    <tr><td>독수리</td><td>돌 폭격</td><td>중</td><td>90</td><td>직접 날아가서 돌을 떨굼. <b>힘 = 날아갈 거리</b>, <b>각도 = 비행 높이</b>(높을수록 떨어지는 시간이 길어 바람·앞쏠림 영향 큼). 돌은 날던 방향으로 조금 앞쪽에 떨어짐</td></tr>
     <tr><td>뱀</td><td>독 장판탄</td><td>하</td><td>110</td><td>맞은 곳에 독 장판(2바퀴 동안 서 있으면 -5)</td></tr>
     <tr><td>박쥐</td><td>흡혈탄</td><td>하</td><td>110</td><td>준 피해의 5%만큼 체력 회복</td></tr>
     <tr><td>물개</td><td>물고기탄</td><td>중</td><td>100</td><td>물속에서 거의 느려지지 않음</td></tr>
@@ -263,7 +263,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v23</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v24</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -316,7 +316,7 @@ const W=960,H=360,G=300,VMAX=520,TURN_T=20,TRIPLE_T=5,MOVE_BUDGET=80;
 const FONT='"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif';
 
 const CHARS={
-  eagle:{name:'독수리',job:'정밀 직사탄',emoji:'🦅',hp:90,grade:2,dmg:22,rad:20,spd:1.12,wind:0.3,size:48,fx:'파워 중 · 바람 영향 적음'},
+  eagle:{name:'독수리',job:'돌 폭격',emoji:'🦅',hp:90,grade:2,dmg:22,rad:20,spd:1.12,wind:0.3,bomber:true,size:48,fx:'날아가서 적 머리 위에 돌을 떨굼 · 힘 = 날아갈 거리 · 각도 = 비행 높이'},
   elephant:{name:'코끼리',job:'대형 폭탄',emoji:'🐘',hp:70,grade:3,dmg:34,rad:38,spd:0.9,wind:1,size:62,fx:'파워 상 · 폭발 반경 최대'},
   hedgehog:{name:'고슴도치',job:'가시 파편탄',emoji:'🦔',hp:90,grade:2,dmg:20,rad:24,spd:1,wind:1,splash:true,size:40,fx:'파워 중 · 가시 파편 추가 피해'},
   mole:{name:'두더지',job:'굴착탄',emoji:'🐹',hp:90,grade:2,dmg:24,rad:26,spd:1,wind:1,dig:true,size:36,fx:'파워 중 · 땅을 깊게 팜'},
@@ -594,9 +594,8 @@ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a
 function drawBottle(c,type,len){
   const k=len/16,cx=len/2;c.save();c.translate(cx,0);
   switch(type){
-    case 'eagle':c.fillStyle='#E0B84A';c.fillRect(-7*k,-0.9*k,12*k,1.8*k);c.fillStyle='#FFF3C4';
-      c.beginPath();c.moveTo(8*k,0);c.lineTo(4*k,-3*k);c.lineTo(4*k,3*k);c.closePath();c.fill();
-      c.fillStyle='#8D6E63';c.beginPath();c.moveTo(-7*k,0);c.lineTo(-10*k,-3*k);c.lineTo(-5*k,0);c.lineTo(-10*k,3*k);c.closePath();c.fill();break;
+    case 'eagle':c.fillStyle='#8D8D8D';c.strokeStyle='#5f5f5f';c.lineWidth=1*k;c.beginPath();c.moveTo(-5*k,-1*k);c.lineTo(-2*k,-4.5*k);c.lineTo(3.5*k,-3.5*k);c.lineTo(5.5*k,0.5*k);c.lineTo(2*k,4*k);c.lineTo(-4*k,3*k);c.closePath();c.fill();c.stroke();
+      c.fillStyle='rgba(255,255,255,.25)';c.beginPath();c.arc(-1*k,-1.5*k,1.4*k,0,7);c.fill();break;
     case 'elephant':c.fillStyle='#222';c.beginPath();c.arc(0,0,6*k,0,7);c.fill();c.fillStyle='rgba(255,255,255,.3)';c.beginPath();c.arc(-2*k,-2*k,2*k,0,7);c.fill();
       c.strokeStyle='#C8A060';c.lineWidth=1.2*k;c.beginPath();c.moveTo(4*k,-4*k);c.lineTo(6.5*k,-7*k);c.stroke();c.fillStyle='#FFB300';c.beginPath();c.arc(6.8*k,-7.3*k,1.5*k,0,7);c.fill();break;
     case 'hedgehog':c.fillStyle='#6D4C2E';for(let i=0;i<10;i++){const a=i*Math.PI/5;c.beginPath();c.moveTo(Math.cos(a)*7*k,Math.sin(a)*7*k);c.lineTo(Math.cos(a+0.3)*3.5*k,Math.sin(a+0.3)*3.5*k);c.lineTo(Math.cos(a-0.3)*3.5*k,Math.sin(a-0.3)*3.5*k);c.closePath();c.fill();}
@@ -1003,7 +1002,11 @@ function drawRange(){
   R.marks.forEach((m,i)=>{const my=groundAt(m.x),a=0.35+0.65*(i+1)/R.marks.length;ctx.globalAlpha=a;ctx.strokeStyle='#FF7043';ctx.lineWidth=2.5;
     ctx.beginPath();ctx.moveTo(m.x-5,my-9);ctx.lineTo(m.x+5,my+1);ctx.moveTo(m.x+5,my-9);ctx.lineTo(m.x-5,my+1);ctx.stroke();});ctx.globalAlpha=1;
   // 예상 궤적
-  if(R.guide&&g.phase==='aim'&&g.cur===u){const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,pw=(g.charging?g.charge:(u.lastPower||50))*(inWater(u)?0.85:1),v=pw/100*VMAX*c.spd,hp=handPos(u);
+  if(R.guide&&g.phase==='aim'&&g.cur===u&&CHARS[u.type].bomber){const c=CHARS[u.type],pw=(g.charging?g.charge:(u.lastPower||50))*(inWater(u)?0.85:1),pl=bomberPlan(u,u.facing,u.angle,pw);
+    ctx.strokeStyle='rgba(255,255,255,.5)';ctx.setLineDash([3,6]);ctx.beginPath();ctx.moveTo(u.x,pl.alt);ctx.lineTo(pl.dropX,pl.alt);ctx.stroke();ctx.setLineDash([]);
+    const o={x:pl.dropX,y:pl.alt,vx:u.facing*BOMB_VX,vy:0};ctx.fillStyle='rgba(255,255,255,.75)';
+    for(let i=0;i<600;i++){physStep(o,c,1/60,false);if(i%3===0){ctx.beginPath();ctx.arc(o.x,o.y,1.6,0,7);ctx.fill();}const ix=Math.round(o.x);if(o.x<-40||o.x>W+40||o.y>H+40)break;if(ix>=0&&ix<=W&&o.y>=g.h[ix]){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(o.x,o.y,5,0,7);ctx.stroke();break;}}}
+  else if(R.guide&&g.phase==='aim'&&g.cur===u){const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,pw=(g.charging?g.charge:(u.lastPower||50))*(inWater(u)?0.85:1),v=pw/100*VMAX*c.spd,hp=handPos(u);
     const o={x:hp.x,y:hp.y,vx:Math.cos(a)*u.facing*v,vy:-Math.sin(a)*v};ctx.fillStyle='rgba(255,255,255,.7)';
     for(let i=0;i<720;i++){physStep(o,c,1/60,false);if(i%4===0){ctx.beginPath();ctx.arc(o.x,o.y,1.6,0,7);ctx.fill();}
       const ix=Math.round(o.x);if(o.x<-40||o.x>W+40||o.y>H+40)break;if(ix>=0&&ix<=W&&o.y>=g.h[ix]){if(c.bounce&&!o.b){o.b=1;o.y=g.h[ix]-1;o.vy=-Math.abs(o.vy)*0.55;o.vx*=0.75;continue;}ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(o.x,o.y,5,0,7);ctx.stroke();break;}}}
@@ -1063,6 +1066,33 @@ function handPosA(u,facing,deg){
 }
 function handPos(u){return handPosA(u,u.facing,u.angle);}
 const CRY_TXT={eagle:'끼야악!',elephant:'뿌우우!',hedgehog:'찍찍찍!',mole:'꾹꾹!',turtle:'쉬익!',bat:'끼끼끼!',snake:'쉬이이익!',tiger:'크아앙!',seal:'아우! 아우!',clownfish:'뽀글뽀글!'};
+// ---------- 독수리 돌 폭격 ----------
+const BOMB_SPD=430,BOMB_VX=110;
+function bomberPlan(u,facing,ang,power){
+  const hp=handPosA(u,facing,ang),dx=clamp(power,5,100)/100*(W-40);
+  const dropX=clamp(u.x+facing*dx,8,W-8);
+  let top=H;for(let x=Math.min(u.x,dropX);x<=Math.max(u.x,dropX);x+=4)top=Math.min(top,g.h[clamp(Math.round(x),0,W)]);
+  const low=Math.max(30,top-55),alt=low+(26-low)*clamp(ang,0,90)/90;   // 0°: 지형 바로 위, 90°: 화면 꼭대기
+  return{x0:hp.x,y0:hp.y,dropX,alt:Math.min(alt,hp.y-10)};
+}
+function simBomber(u,facing,a,p,wind,c,t){
+  const pl=bomberPlan(u,facing,a,p),o={x:pl.dropX,y:pl.alt,vx:facing*BOMB_VX,vy:0};
+  for(let i=0;i<600;i++){physStep(o,c,1/60,false,wind);const x=o.x,y=o.y;
+    if(t&&x>t.x-uW(t)&&x<t.x+uW(t)&&y>t.y-uH(t)&&y<t.y)return{x,hit:true,y};
+    if(x>u.x-uW(u)&&x<u.x+uW(u)&&y>u.y-uH(u)&&y<u.y)return{x,self:true,y};
+    const ix=Math.round(x);if(ix>=0&&ix<=W&&y>=g.h[ix])return{x,y};
+    if(obsHit(x,y))return{x,blocked:true,y};if(x<-80||x>W+80||y>H+80)return{x:x<0?-9999:9999,y};}
+  return{x:9999};
+}
+function updateCarrier(p,dt){   // 독수리가 날아가는 구간: 올라간 뒤 수평 비행, 목표 지점에서 돌 투하
+  const tx=p.stage===0?p.x0+p.facing*40:p.dropX,ty=p.alt;
+  const dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy),st=BOMB_SPD*dt;
+  if(p.stage===0&&d<=st+2){p.stage=1;}
+  if(p.stage===1&&(p.facing>0?p.x>=p.dropX:p.x<=p.dropX)||(p.stage===1&&d<=st)){
+    p.carrier=false;g.fly={x:p.dropX,y:p.alt,f:-p.facing,u:p.owner};p.x=p.dropX;p.y=p.alt;p.vx=p.facing*BOMB_VX;p.vy=0;p.age=0.4;sfx.throw();floatText(p.x,p.y-16,'투하!','#FFE082');return;}
+  const k=d>0?Math.min(1,st/d):0;p.vx=dx/dt*k;p.vy=dy/dt*k;p.x+=dx*k;p.y+=dy*k;
+  p.trail.length=0;
+}
 function fireShot(power,isBurst){
   const u=g.cur,c=CHARS[u.type];
   power=clamp(power,5,100);
@@ -1070,6 +1100,7 @@ function fireShot(power,isBurst){
   if(inWater(u)){power*=0.85;if(!isBurst)floatText(u.x,u.y-sprH(u.type)-20,'💧 물속 힘 -15%','#9fd8ff');}
   const a=effAngle(u)*Math.PI/180,v=power/100*VMAX*c.spd,hp=handPos(u);
   g.proj={x:hp.x,y:hp.y,vx:Math.cos(a)*u.facing*v,vy:-Math.sin(a)*v,type:u.type,owner:u,boost:g.boost,age:0,spin:0,trail:[]};
+  if(c.bomber){const pl=bomberPlan(u,u.facing,u.angle,power);Object.assign(g.proj,{carrier:true,stage:0,facing:u.facing,x0:pl.x0,dropX:pl.dropX,alt:pl.alt,vx:0,vy:0});}
   g.boost=false;g.phase='flying';u.throwT=0.3;sfx.throw();
   if(!isBurst){sfx.cry(u.type);netEv(['s','cry',u.type]);floatText(u.x,u.y-sprH(u.type)-22,CRY_TXT[u.type]||'',u.color||'#fff');}
   g.extra=[];
@@ -1097,6 +1128,7 @@ function updateProjectile(dt){
     return;
   }
   const c=CHARS[p.type],steps=4,sdt=dt/steps;
+  if(p.carrier){updateCarrier(p,dt);return;}
   for(let s=0;s<steps;s++){
     physStep(p,c,sdt,true);p.age+=sdt;
     for(const u of g.units){
@@ -1261,7 +1293,7 @@ function simShot(u,facing,a,p,wind,c,t){
 function aiSolve(u,t,wind){
   const c=CHARS[u.type],facing=t.x>=u.x?1:-1;let best={a:45,p:70,s:1e9};
   for(let a=15;a<=80;a+=5)for(let p=20;p<=100;p+=2){
-    const r=simShot(u,facing,a,p,wind,c,t);
+    const r=c.bomber?simBomber(u,facing,a,p,wind,c,t):simShot(u,facing,a,p,wind,c,t);
     let s=r.hit?0:Math.abs(r.x-t.x);if(r.self)s+=1000;s+=Math.abs(a-45)*0.05;
     if(s<best.s)best={a,p,s};
   }
@@ -1359,7 +1391,7 @@ function updateCam(dt){
   const vw=VW/cam.z/2,vh=VH/cam.z/2;cam.x=clamp(cam.x,vw,W-vw);cam.y=clamp(cam.y,Math.min(vh-90,H-vh),H-vh+(PORT?15:0));
 }
 function update(dt){
-  fireHoldTick();
+  fireHoldTick();updateFly(dt);
   if(g.remote)guestSmooth(dt);
   for(const v of g.units){if(!v.alive)continue;const t=tiltOf(v);v.tilt=v.tilt==null?t:v.tilt+(t-v.tilt)*Math.min(1,dt*10);}
   updateCam(dt);updateWater(dt);decoFx();
@@ -1518,7 +1550,11 @@ function render(){
   if(g.range)drawRange();
   // 조준선
   const u=g.cur;
-  if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'&&!aimSecret(u)){
+  if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'&&!aimSecret(u)&&CHARS[u.type].bomber){
+    const pl=bomberPlan(u,u.facing,u.angle,100),y=pl.alt;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.5;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(u.x,y);ctx.lineTo(u.x+u.facing*90,y);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#fff';ctx.font=`bold 11px ${FONT}`;ctx.textAlign='center';ctx.fillText(`비행 높이 ${Math.round(u.angle)}° ${u.facing>0?'→':'←'}`,u.x+u.facing*45,y-6);}
+  else if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'&&!aimSecret(u)){
     const ea=effAngle(u),a=ea*Math.PI/180,hp0=handPos(u),sx=hp0.x,sy=hp0.y;
     ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
     ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+Math.cos(a)*u.facing*55,sy-Math.sin(a)*55);ctx.stroke();ctx.setLineDash([]);
@@ -1539,8 +1575,10 @@ function render(){
     ctx.globalAlpha=1;
     if(p.homing){ctx.fillStyle='rgba(255,60,60,.35)';ctx.beginPath();ctx.arc(p.x,p.y,10,0,7);ctx.fill();}
     if(p.boost){ctx.fillStyle='rgba(255,200,40,.35)';ctx.beginPath();ctx.arc(p.x,p.y,11,0,7);ctx.fill();}
+    if(p.carrier){drawCarrier(p);continue;}
     ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.translate(-8,0);drawBottle(ctx,p.type,16);ctx.restore();
   }}
+  if(g.fly)drawCarrier({x:g.fly.x,y:g.fly.y,facing:g.fly.f},true);
   // 폭발·파편
   for(const f of g.flashes){
     const k=f.life/f.max;ctx.globalAlpha=k*0.8;ctx.fillStyle='#FFF3C4';ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1.2-k*0.4),0,7);ctx.fill();
@@ -1565,8 +1603,23 @@ function render(){
   ctx.restore();
   drawHud();
 }
+function updateFly(dt){   // 돌을 떨군 독수리가 제자리로 돌아감 (보기용)
+  const F=g.fly;if(!F)return;const u=F.u;if(!u||!u.alive){g.fly=null;return;}
+  const tx=u.x,ty=u.y-uH(u)*0.6,dx=tx-F.x,dy=ty-F.y,d=Math.hypot(dx,dy),st=560*dt;
+  if(d<=st+4){g.fly=null;return;}F.x+=dx/d*st;F.y+=dy/d*st;F.f=dx<0?-1:1;
+}
+function drawCarrier(p,noRock){
+  const f=p.facing||1,S=sprH('eagle')*0.95,t=performance.now()/1000,flap=1+Math.sin(t*14)*0.12;
+  ctx.save();ctx.translate(p.x,p.y);
+  if(!noRock){ctx.fillStyle='#8D8D8D';ctx.strokeStyle='#5f5f5f';ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(0,S*0.32,6,5,0,0,7);ctx.fill();ctx.stroke();}   // 발에 쥔 돌
+  const r=realOK('eagle')&&REAL.chars.eagle;
+  if(r){const sw=S*r.w/r.h;ctx.scale(f*(r.flip?-1:1),flap);ctx.drawImage(r.img,-sw*0.5,-S*0.55,sw,S);}
+  else{ctx.scale(-f,flap);ctx.font=`${S}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🦅',0,0);}
+  ctx.restore();
+}
 function drawUnit(u){
   if(u.y>H+50)return;
+  if((g.proj&&g.proj.carrier&&g.cur===u&&CHARS[u.type].bomber)||(g.fly&&g.fly.u===u))return;   // 날아간 동안은 제자리에 없음
   const c=ctx;
   if(!u.alive){
     c.save();c.translate(u.x,u.y);c.rotate(-Math.PI/2*u.facing);
@@ -1764,7 +1817,7 @@ function doFireDown(ctrl){
   if(g.mode==='penalty'){if(!g.fired)launchPenalty();return;}
   g.charging=true;g.charge=0;
 }
-function guestLocalShot(pw){const u=g.cur;if(!u)return;const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,v=clamp(pw,5,100)*(inWater(u)?0.85:1)/100*VMAX*c.spd,hp=handPos(u);
+function guestLocalShot(pw){const u=g.cur;if(!u)return;if(CHARS[u.type].bomber){u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();return;}const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,v=clamp(pw,5,100)*(inWater(u)?0.85:1)/100*VMAX*c.spd,hp=handPos(u);
   g.proj={x:hp.x,y:hp.y,trail:[],type:u.type,spin:0,boost:g.boost,_local:true,_lt:performance.now(),_lvx:Math.cos(a)*u.facing*v,_lvy:-Math.sin(a)*v};
   u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();}
 function fireUp(){const was=fireHeld;fireHeld=false;if(NET.role==='guest'){if(NET.lc&&g){guestSync();const pw=Math.round(g.charge*10)/10;netSend(NET.dc,{t:'fu',p:pw,a:g.cur?Math.round(g.cur.angle*10)/10:null});NET.lc=false;NET.lcHold=performance.now();g.charging=false;guestLocalShot(pw);}else if(was)netSend(NET.dc,{t:'fu'});return;}if(was)doFireUp(NET.myId);}
@@ -2486,7 +2539,7 @@ function makeSnap(){
     ch:g.charging?1:0,cg:Math.round(g.charge),ml:Math.round(g.moveLeft),sl:g.shotsLeft,xu:g.extraUsed?1:0,tg:g.target?U.indexOf(g.target):-1,
     u:U.map(u=>[Math.round(u.x*10)/10,Math.round(u.y*10)/10,u.hp,u.alive?1:0,u.facing,Math.round(u.angle),Math.round(u.lastPower),u.throwT>0?1:0,u.hurtT>0?1:0,u.items.bomb,u.items.penalty,u.items.triple]),
     ex:(g.extra||[]).map(e=>[Math.round(e.x),Math.round(e.y),e.type]),
-    pr:g.proj?[Math.round(g.proj.x),Math.round(g.proj.y),g.proj.type,Math.round(g.proj.spin*100)/100,g.proj.homing?1:0,g.proj.boost?1:0,Math.round(g.proj.vx||0),Math.round(g.proj.vy||0)]:null,
+    pr:g.proj?[Math.round(g.proj.x),Math.round(g.proj.y),g.proj.type,Math.round(g.proj.spin*100)/100,g.proj.homing?1:0,g.proj.boost?1:0,Math.round(g.proj.vx||0),Math.round(g.proj.vy||0),g.proj.carrier?(g.proj.facing>0?1:2):0]:null,
     pd:g.puddles.map(p=>[Math.round(p.x),p.w,p.color||'',p.turns]),ev:NET.ev.splice(0)};
 }
 function applySnap(s){
@@ -2499,8 +2552,9 @@ function applySnap(s){
   const mine=own&&!first;if(!mine)g.moveLeft=s.ml;
   s.u.forEach((a,i)=>{const u=g.units[i];if(!u)return;const me=mine&&u===g.cur;if(!me&&(u._tx==null||Math.abs(a[0]-u.x)>80||Math.abs(a[1]-u.y)>80)){u.x=a[0];u.y=a[1];}u._tx=me?u.x:a[0];u._ty=me?u.y:a[1];u.hp=a[2];u.alive=!!a[3];if(!me){u.facing=a[4];u.angle=a[5];}u.lastPower=a[6];
     u.throwT=a[7]?0.1:0;u.hurtT=a[8]?0.2:0;u.items={bomb:a[9],penalty:a[10],triple:a[11],heal:0};});
+  const wasC=!!(g.proj&&g.proj.carrier),oldF=g.proj&&g.proj.facing;
   if(s.pr){let p=g.proj;const fresh=!p||p.type!==s.pr[2]||(!p._nt&&!p._local);if(fresh){p={trail:[],x:s.pr[0],y:s.pr[1]};}p._local=false;
-    p._nx=s.pr[0];p._ny=s.pr[1];p._vx=s.pr[6]||0;p._vy=s.pr[7]||0;p._nt=performance.now();p.type=s.pr[2];p.spin=s.pr[3];p.homing=!!s.pr[4];p.boost=!!s.pr[5];g.proj=p;}
+    p._nx=s.pr[0];p._ny=s.pr[1];p._vx=s.pr[6]||0;p._vy=s.pr[7]||0;p._nt=performance.now();p.type=s.pr[2];p.spin=s.pr[3];p.homing=!!s.pr[4];p.boost=!!s.pr[5];p.carrier=!!s.pr[8];p.facing=s.pr[8]===2?-1:s.pr[8]===1?1:(oldF||1);g.proj=p;if(wasC&&!p.carrier&&g.cur)g.fly={x:p.x,y:p.y,f:-(oldF||1),u:g.cur};}
   else if(!(g.proj&&g.proj._local&&performance.now()-g.proj._lt<1500))g.proj=null;
   {const ex=s.ex||[],old=g.extra||[];g.extra=ex.map((a,i)=>{const o=old[i]&&old[i].type===a[2]?old[i]:{x:a[0],y:a[1],trail:[],spin:0,type:a[2]};o._tx=a[0];o._ty=a[1];o.type=a[2];return o;});}
   g.puddles=s.pd.map(a=>({x:a[0],w:a[1],color:a[2]||undefined,turns:a[3]}));
