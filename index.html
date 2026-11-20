@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v32 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v33 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -265,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v32</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v33</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -2066,6 +2066,9 @@ function cardCanvas(type,w,h){
   drawPerson(x,type,w/2,h-4,1,0,0.9*50/sprH(type),{});
   return cc;
 }
+const RAND_CH={name:'랜덤',emoji:'🎲',job:'시작할 때 정해짐',hp:'?',fx:'10종 중 무작위'};
+function chInfo(t){return t==='random'?RAND_CH:CHARS[t];}
+function pickRandType(t){return t==='random'?ORDER[Math.random()*ORDER.length|0]:t;}
 function openSelect(si,campaign){
   const lp=lastPicks[si];sel={si,picks:lp?lp.picks.slice():[],mi:lp?lp.mi:STAGES[si].map,campaign:!!campaign};
   hideAll();show('select');
@@ -2081,6 +2084,9 @@ function openSelect(si,campaign){
     d.addEventListener('click',()=>{if(sel.picks.length>=st.p)sel.picks.pop();sel.picks.push(type);renderSlots();});
     box.appendChild(d);
   });
+  {const d=document.createElement('div');d.className='card';d.dataset.type='random';
+    d.innerHTML='<div style="width:78px;height:62px;display:flex;align-items:center;justify-content:center;font-size:44px">🎲</div><b>랜덤</b><span>시작할 때<br>무작위로 정해짐</span><span>10종 중 하나</span>';
+    d.addEventListener('click',()=>{if(sel.picks.length>=st.p)sel.picks.pop();sel.picks.push('random');renderSlots();});box.appendChild(d);}
   renderSlots();
 }
 function renderSlots(){
@@ -2089,7 +2095,7 @@ function renderSlots(){
   for(let i=0;i<st.p;i++){
     const d=document.createElement('div'),t=sel.picks[i];
     d.className='slot'+(t?' full':'');d.style.borderColor=PCOL[i];
-    d.innerHTML=t?`<span style="color:${PCOL[i]}">●</span> 나${i+1} ${CHARS[t].name} ✕`:`나${i+1} (빈칸)`;
+    d.innerHTML=t?`<span style="color:${PCOL[i]}">●</span> 나${i+1} ${chInfo(t).emoji} ${chInfo(t).name} ✕`:`나${i+1} (빈칸)`;
     if(t)d.addEventListener('click',()=>{sel.picks.splice(i,1);renderSlots();});
     box.appendChild(d);
   }
@@ -2097,12 +2103,13 @@ function renderSlots(){
   document.querySelectorAll('.card').forEach(el=>el.classList.toggle('sel',sel.picks.includes(el.dataset.type)));
 }
 $('selBack').addEventListener('click',openTitle);
-$('selRand').addEventListener('click',()=>{const st=STAGES[sel.si];sel.picks=[];for(let i=0;i<st.p;i++)sel.picks.push(ORDER[Math.random()*5|0]);renderSlots();});
-$('selGo').addEventListener('click',()=>{sfx.unlock();startStage(sel.si,sel.picks,sel.mi,sel.campaign);});
+$('selRand').addEventListener('click',()=>{const st=STAGES[sel.si];sel.picks=[];for(let i=0;i<st.p;i++)sel.picks.push('random');sel.mi=-1;renderSlots();renderMaps();});
+$('selGo').addEventListener('click',()=>{sfx.unlock();const picks=sel.picks.map(pickRandType),mi=sel.mi<0?Math.random()*MAPS.length|0:sel.mi;startStage(sel.si,picks,mi,sel.campaign);});
 function renderMaps(){
   const box=$('maps');box.innerHTML='';
   MAPS.forEach((m,i)=>{const b=document.createElement('button');b.className='b sm'+(i===sel.mi?' pri':'');
     b.textContent=m.name+(i===STAGES[sel.si].map?' (기본)':'');b.addEventListener('click',()=>{sel.mi=i;renderMaps();});box.appendChild(b);});
+  const r=document.createElement('button');r.className='b sm'+(sel.mi<0?' pri':'');r.textContent='🎲 랜덤';r.addEventListener('click',()=>{sel.mi=-1;renderMaps();});box.appendChild(r);
 }
 
 function openPause(){$('pRetry').style.display=g.campaign||g.mp?'none':'';$('pMp').style.display=g.mp?'':'none';$('pTitle').style.display=g.mp?'none':'';resetConfirm();if(g.mp){$('optShake2').checked=settings.shake;$('optSound2').checked=settings.sound;$('optMusic2').checked=settings.music;$('optCam2').checked=settings.cam!==false;$('optVib2').checked=settings.vib!==false;show('pause');return;}g.paused=true;inp.left=inp.right=inp.up=inp.down=false;g.charging=false;
@@ -2190,7 +2197,7 @@ function endStage(win,draw){
 }
 
 // ---------- 같은 와이파이 대전 (2~4인, 서버 없이 휴대폰끼리 직접 연결) ----------
-const NET={role:null,myId:0,name:'',myType:store.get('mpType','tiger'),peers:{},players:[],mi:0,ev:[],nextId:1,
+const NET={role:null,myId:0,name:'',myType:(t=>CHARS[t]||t==='random'?t:'tiger')(store.get('mpType','tiger')),peers:{},players:[],mi:0,ev:[],nextId:1,
   pending:null,pc:null,dc:null,lastSnap:0,remoteInp:{},inMode:null,lastCode:''};
 function netSend(dc,o){try{if(dc&&dc.readyState==='open')dc.send(JSON.stringify(o));}catch(e){}}
 function netBroadcast(o){const t=JSON.stringify(o);for(const id in NET.peers){const dc=NET.peers[id].dc;try{if(dc&&dc.readyState==='open')dc.send(t);}catch(e){}}}
@@ -2468,15 +2475,16 @@ function showCode(title,code){
 function showInput(title,mode){NET.inMode=mode;$('lbInBox').style.display='';$('lbInTitle').textContent=title;$('lbIn').value='';}
 function renderLbAnimals(){
   const box=$('lbAnimals');box.innerHTML='';
-  ORDER.forEach(t=>{const b=document.createElement('button');b.className='b'+(t===NET.myType?' pri':'');b.textContent=CHARS[t].emoji+' '+CHARS[t].name;
+  ORDER.concat(['random']).forEach(t=>{const b=document.createElement('button');b.className='b'+(t===NET.myType?' pri':'');b.textContent=chInfo(t).emoji+' '+chInfo(t).name;
     b.addEventListener('click',()=>{NET.myType=t;store.set('mpType',t);renderLbAnimals();if(NET.role==='guest')netSend(NET.dc,{t:'pick',type:t});else lobbyRefresh();});box.appendChild(b);});
 }
 function renderLbMaps(){
   const box=$('lbMaps');box.innerHTML='';
   MAPS.forEach((m,i)=>{const b=document.createElement('button');b.className='b sm'+(i===NET.mi?' pri':'');b.textContent=m.name;
     b.addEventListener('click',()=>{NET.mi=i;renderLbMaps();lobbyRefresh();});box.appendChild(b);});
+  if(NET.role!=='guest'){const r=document.createElement('button');r.className='b sm'+(NET.mi<0?' pri':'');r.textContent='🎲 랜덤';r.addEventListener('click',()=>{NET.mi=-1;renderLbMaps();lobbyRefresh();});box.appendChild(r);}
 }
-function slotPic(type){const rc=realOK(type)&&REAL.chars[type];
+function slotPic(type){if(type==='random')return '🎲';const rc=realOK(type)&&REAL.chars[type];
   if(rc&&rc.portrait)return `<img src="${rc.portrait}" alt="">`;return CHARS[type]?CHARS[type].emoji:'❔';}
 function renderMpSlots(){
   const box=$('lbPlayers');if(!box)return;box.className='mpSlots';box.innerHTML='';
@@ -2484,14 +2492,14 @@ function renderMpSlots(){
   for(let i=0;i<4;i++){
     const p=pl[i],d=document.createElement('div');d.className='mpSlot';
     const col=i===0?'#FFD54F':PCOL[i]||'#90A4AE',label=i===0?'👑 방장':'참가자 '+i;
-    if(p){const me=p.id===NET.myId,c=CHARS[p.type]||{};
+    if(p){const me=p.id===NET.myId,c=chInfo(p.type)||{};
       d.style.borderColor=PCOL[i];
       d.innerHTML=`<span class="tag" style="background:${col}">${label}${me?' · 나':''}</span><div class="pic" style="box-shadow:0 0 0 2px ${PCOL[i]}">${slotPic(p.type)}</div>
         <div><div class="nm" style="color:${PCOL[i]}">${p.name}</div><div class="an">${c.emoji||''} ${c.name||''}</div><div class="st" style="color:#8BC34A">● ${i===0?'방 만듦':'참가 완료'}</div></div>`;
       if(NET.role==='host'&&p.id!==0){const k=document.createElement('button');k.className='kick';k.textContent='내보내기';
         k.addEventListener('click',()=>{if(k.dataset.sure){kickPeer(p.id);return;}k.dataset.sure=1;k.textContent='정말?';k.classList.add('sure');
           setTimeout(()=>{if(k.isConnected){delete k.dataset.sure;k.textContent='내보내기';k.classList.remove('sure');}},3000);});d.appendChild(k);}}
-    else if(NET.role==='host'&&reqs[ri]){const r=reqs[ri++],c=CHARS[r.type]||{};d.classList.add('wait');
+    else if(NET.role==='host'&&reqs[ri]){const r=reqs[ri++],c=chInfo(r.type)||{};d.classList.add('wait');
       d.innerHTML=`<span class="tag" style="background:#FFD54F">${label}</span><div class="pic">${slotPic(r.type)}</div>
         <div><div class="nm">${r.name}</div><div class="an">${c.emoji||''} ${c.name||''}</div><div class="st" style="color:#FFD54F">🙋 참가 요청 중 · 아래 [수락]</div></div>`;}
     else if(i===0&&NET.role==='guest'){d.classList.add('wait');
@@ -2518,7 +2526,7 @@ function lobbyRefresh(){
   }
   renderMpSlots();
   if(NET.role==='host')lbStatus(NET.players.length<2?'참가자가 [방 참가]를 누르면 아래에 요청이 뜹니다 (최대 4명)':`${NET.players.length}명 연결됨 · 더 받거나 [대전 시작]을 누르세요`);
-  else if(NET.role==='guest'&&NET.dc&&NET.dc.readyState==='open'){lbStatus(`연결됨 · 맵: ${MAPS[NET.mi].name} · 방장이 시작하기를 기다리는 중`);try{renderRooms();}catch(e){}}
+  else if(NET.role==='guest'&&NET.dc&&NET.dc.readyState==='open'){lbStatus(`연결됨 · 맵: ${NET.mi<0?'🎲 랜덤':MAPS[NET.mi].name} · 방장이 시작하기를 기다리는 중`);try{renderRooms();}catch(e){}}
   try{if(NET.role==='host'){lanAnnounce();renderReqs();}}catch(e){}
 }
 const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'}];
@@ -2565,8 +2573,8 @@ async function guestJoin(t){
 }
 function hostOnMsg(id,m){
   const P=NET.peers[id];if(!P)return;
-  if(m.t==='hello'){P.name=String(m.name||'참가자').slice(0,6);P.type=CHARS[m.type]?m.type:'tiger';P.open=true;netSend(P.dc,{t:'welcome',id});lobbyRefresh();return;}
-  if(m.t==='pick'){if(CHARS[m.type])P.type=m.type;lobbyRefresh();return;}
+  if(m.t==='hello'){P.name=String(m.name||'참가자').slice(0,6);P.type=CHARS[m.type]||m.type==='random'?m.type:'tiger';P.open=true;netSend(P.dc,{t:'welcome',id});lobbyRefresh();return;}
+  if(m.t==='pick'){if(CHARS[m.type]||m.type==='random')P.type=m.type;lobbyRefresh();return;}
   if(m.t==='chat'){hostChat(id,m.m);return;}
   if(!g||!g.mp)return;
   if(m.t==='ff'){forfeit(id,'ff');return;}
@@ -2615,7 +2623,7 @@ function hostStartMatch(){
   const n=NET.players.length,base=NET.players.map((_,k)=>70+k*((W-140)/(n-1)));
   for(let k=n-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[base[k],base[j]]=[base[j],base[k]];}   // 자리 섞기
   const xs=base.map(x=>Math.round(clamp(x+(Math.random()*40-20),40,W-40)));
-  const cfg={t:'start',seed:(Date.now()&0xffff),mi:NET.mi,players:NET.players,wind:40,xs,first:Math.floor(Math.random()*n)};
+  const cfg={t:'start',seed:(Date.now()&0xffff),mi:NET.mi<0?Math.random()*MAPS.length|0:NET.mi,players:NET.players.map(p=>Object.assign({},p,{type:pickRandType(p.type)})),wind:40,xs,first:Math.floor(Math.random()*n)};
   netBroadcast(cfg);startMatch(cfg);
 }
 function startMatch(cfg){
@@ -2752,7 +2760,7 @@ function mkRelay(topic){return{readyState:'open',_l:0,onmessage:null,
   close(){this.readyState='closed';}};}
 function lanRelayHost(r,P){
   try{P.pc.close();}catch(e){}if(NET.pending===P)NET.pending=null;
-  const id=NET.nextId++,base=LT+'r/'+LAN.rid+'/d/',dc=mkRelay(base+'g/'+r.cid),Q={id,cid:r.cid,dev:r.dev,pc:null,dc,open:false,name:r.name,type:r.type||'tiger',relay:true};
+  const id=NET.nextId++,base=LT+'r/'+LAN.rid+'/d/',dc=mkRelay(base+'g/'+r.cid),Q={id,cid:r.cid,dev:r.dev,pc:null,dc,open:false,name:r.name,type:CHARS[r.type]||r.type==='random'?r.type:'tiger',relay:true};
   dc.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch(err){return;}if(!NET.peers[id])NET.peers[id]=Q;hostOnMsg(id,m);};
   NET.peers[id]=Q;LAN.relay[r.cid]=Q;LAN.c.sub(base+'h/'+r.cid);
   setTimeout(()=>{if(LAN.c)LAN.c.pub(LT+'r/'+LAN.rid+'/g/'+r.cid,JSON.stringify({t:'relay'}));},300);
