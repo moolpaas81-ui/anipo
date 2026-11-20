@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v30 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v31 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -156,6 +156,7 @@ body.port .cpu{flex:1;text-align:center}
     <label class="tog"><input type="checkbox" id="optSound"> 소리</label>
     <label class="tog"><input type="checkbox" id="optMusic"> 자연의 소리</label>
     <label class="tog"><input type="checkbox" id="optCam"> 포탄 따라가기·확대</label>
+    <label class="tog"><input type="checkbox" id="optVib"> 정타 진동</label>
   </div>
 </div></div>
 
@@ -230,6 +231,7 @@ body.port .cpu{flex:1;text-align:center}
     <label class="tog"><input type="checkbox" id="optSound2"> 소리</label>
     <label class="tog"><input type="checkbox" id="optMusic2"> 자연의 소리</label>
     <label class="tog"><input type="checkbox" id="optCam2"> 포탄 따라가기·확대</label>
+    <label class="tog"><input type="checkbox" id="optVib2"> 정타 진동</label>
   </div>
   <div class="row">
     <button class="b pri" id="pResume">계속</button>
@@ -263,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v30</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v31</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -419,7 +421,7 @@ const store={
   get(k,d){try{const v=localStorage.getItem('abf_'+k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
   set(k,v){try{localStorage.setItem('abf_'+k,JSON.stringify(v));}catch(e){}}
 };
-const settings={shake:store.get('shake',true),sound:store.get('sound',true),real:store.get('real',true),music:store.get('music',true),cam:store.get('cam',true)};
+const settings={shake:store.get('shake',true),sound:store.get('sound',true),real:store.get('real',true),music:store.get('music',true),cam:store.get('cam',true),vib:store.get('vib',true)};
 
 // ---------- 소리 (Web Audio 합성) ----------
 const sfx=(()=>{
@@ -1115,7 +1117,7 @@ function clawHit(p){
 }
 function clawFx(x,y,f,hits){
   netEv(['k',x,y,f,hits?1:0]);
-  g.claw={x,y,f,t:0,hit:!!hits};g.flashC=null;g.slowT=hits?0.45:0.2;g.flashW=hits?0.22:0.1;g.shakeT=Math.max(g.shakeT,hits?0.35:0.15);
+  g.claw={x,y,f,t:0,hit:!!hits};g.flashC=null;if(hits)buzz('tiger');g.slowT=hits?0.45:0.2;g.flashW=hits?0.22:0.1;g.shakeT=Math.max(g.shakeT,hits?0.35:0.15);
   if(settings.cam!==false)g.camHit={x,y:y+10,t:1.0};
   try{sfx.cry('tiger');sfx.boomS(hits?2:1);}catch(e){}
 }
@@ -1131,10 +1133,13 @@ const IMP={
   seal:{txt:'물보라!',col:'#81D4FA',fl:'170,225,255',slow:0.35},
   clownfish:{txt:'거품 팡!',col:'#FFAB91',fl:'255,210,200',slow:0.3}
 };
+const VIB={eagle:[60,40,160],elephant:[350],hedgehog:[30,25,30,25,30,25,30,25,30],mole:[120,40,120,40,220],turtle:[90,60,90],
+  bat:[50,80,50,80,150],snake:[40,40,40,40,180],tiger:[70,50,70,50,70],seal:[100,60,200],clownfish:[25,35,25,35,25,35,60]};
+function buzz(type){if(settings.vib===false)return;try{navigator.vibrate&&navigator.vibrate(VIB[type]||[120]);}catch(e){}}
 function impactFx(type,x,y,f,ox,oy){netEv(['k',x,y,f,1,type,ox,oy]);impactLocal(type,x,y,f,ox,oy);}
 function impactLocal(type,x,y,f,ox,oy){
   const d=IMP[type];if(!d)return;
-  g.imp={type,x,y,f,ox,oy,t:0};g.slowT=d.slow;g.flashW=0.22;g.flashC=d.fl;g.shakeT=Math.max(g.shakeT||0,d.shake||0.3);
+  g.imp={type,x,y,f,ox,oy,t:0};buzz(type);g.slowT=d.slow;g.flashW=0.22;g.flashC=d.fl;g.shakeT=Math.max(g.shakeT||0,d.shake||0.3);
   if(settings.cam!==false)g.camHit={x,y:y+6,t:1.0};
   try{sfx.cry(type);sfx.boomS(2);}catch(e){}
   const P=(n,fn)=>{for(let i=0;i<n;i++)g.parts.push(fn(i));};
@@ -1987,7 +1992,7 @@ function openTitle(){
   addR(`🐾 혼자하기<small>새 게임 · 목숨 ${hearts(MAX_LIVES)}</small>`,()=>{
     if(run&&!confirmNew())return;
     store.set('run',{stage:0,lives:MAX_LIVES});openSelect(0,true);},!run);
-  $('optShake').checked=settings.shake;$('optSound').checked=settings.sound;$('optMusic').checked=settings.music;$('optCam').checked=settings.cam!==false;
+  $('optShake').checked=settings.shake;$('optSound').checked=settings.sound;$('optMusic').checked=settings.music;$('optCam').checked=settings.cam!==false;$('optVib').checked=settings.vib!==false;
   renderPhotoRow();
 }
 function renderPhotoRow(){
@@ -2038,7 +2043,7 @@ function saveMerged(){
   $('photoMsg').textContent='"동물포트리스_실사.html" 파일을 저장했습니다. 이 파일 하나만 휴대폰에 옮겨도 실사로 실행됩니다.';
 }
 function bindOpt(id,key){$(id).addEventListener('change',e=>{settings[key]=e.target.checked;store.set(key,settings[key]);});}
-bindOpt('optShake','shake');bindOpt('optSound','sound');bindOpt('optShake2','shake');bindOpt('optSound2','sound');bindOpt('optCam','cam');bindOpt('optCam2','cam');
+bindOpt('optShake','shake');bindOpt('optSound','sound');bindOpt('optShake2','shake');bindOpt('optSound2','sound');bindOpt('optCam','cam');bindOpt('optCam2','cam');bindOpt('optVib','vib');bindOpt('optVib2','vib');
 ['optMusic','optMusic2'].forEach(id=>$(id).addEventListener('change',e=>{settings.music=e.target.checked;store.set('music',settings.music);$('optMusic').checked=$('optMusic2').checked=settings.music;if(settings.music)bgm.start();else bgm.stop();}));
 $('btnHelp').addEventListener('click',()=>{helpReturn='title';hideAll();show('help');});
 $('helpClose').addEventListener('click',()=>{$('help').classList.add('hide');show(helpReturn);});
@@ -2100,8 +2105,8 @@ function renderMaps(){
     b.textContent=m.name+(i===STAGES[sel.si].map?' (기본)':'');b.addEventListener('click',()=>{sel.mi=i;renderMaps();});box.appendChild(b);});
 }
 
-function openPause(){$('pRetry').style.display=g.campaign||g.mp?'none':'';$('pMp').style.display=g.mp?'':'none';$('pTitle').style.display=g.mp?'none':'';resetConfirm();if(g.mp){$('optShake2').checked=settings.shake;$('optSound2').checked=settings.sound;$('optMusic2').checked=settings.music;$('optCam2').checked=settings.cam!==false;show('pause');return;}g.paused=true;inp.left=inp.right=inp.up=inp.down=false;g.charging=false;
-  $('optShake2').checked=settings.shake;$('optSound2').checked=settings.sound;$('optMusic2').checked=settings.music;$('optCam2').checked=settings.cam!==false;show('pause');}
+function openPause(){$('pRetry').style.display=g.campaign||g.mp?'none':'';$('pMp').style.display=g.mp?'':'none';$('pTitle').style.display=g.mp?'none':'';resetConfirm();if(g.mp){$('optShake2').checked=settings.shake;$('optSound2').checked=settings.sound;$('optMusic2').checked=settings.music;$('optCam2').checked=settings.cam!==false;$('optVib2').checked=settings.vib!==false;show('pause');return;}g.paused=true;inp.left=inp.right=inp.up=inp.down=false;g.charging=false;
+  $('optShake2').checked=settings.shake;$('optSound2').checked=settings.sound;$('optMusic2').checked=settings.music;$('optCam2').checked=settings.cam!==false;$('optVib2').checked=settings.vib!==false;show('pause');}
 function closePause(){$('pause').classList.add('hide');if(g)g.paused=false;}
 $('pResume').addEventListener('click',closePause);
 $('pRetry').addEventListener('click',()=>{const si=g.si;startStage(si,lastPicks[si].picks,lastPicks[si].mi,false);});
@@ -2680,7 +2685,7 @@ function applySnap(s){
   for(const e of s.ev){
     if(e[0]==='b')boom(e[1],e[2],e[3],e[4],e[5],!!e[6]);
     else if(e[0]==='k'&&e[5]){impactLocal(e[5],e[1],e[2],e[3],e[6],e[7]);}
-    else if(e[0]==='k'){g.claw={x:e[1],y:e[2],f:e[3],t:0,hit:!!e[4]};g.flashC=null;g.slowT=e[4]?0.45:0.2;g.flashW=e[4]?0.22:0.1;g.shakeT=Math.max(g.shakeT||0,e[4]?0.35:0.15);if(settings.cam!==false)g.camHit={x:e[1],y:e[2]+10,t:1.0};try{sfx.cry('tiger');sfx.boomS(e[4]?2:1);}catch(err){}}
+    else if(e[0]==='k'){g.claw={x:e[1],y:e[2],f:e[3],t:0,hit:!!e[4]};g.flashC=null;if(e[4])buzz('tiger');g.slowT=e[4]?0.45:0.2;g.flashW=e[4]?0.22:0.1;g.shakeT=Math.max(g.shakeT||0,e[4]?0.35:0.15);if(settings.cam!==false)g.camHit={x:e[1],y:e[2]+10,t:1.0};try{sfx.cry('tiger');sfx.boomS(e[4]?2:1);}catch(err){}}
     else if(e[0]==='t')floatText(e[1],e[2],e[3],e[4]);
     else if(e[0]==='c')carve(e[1],e[2],e[3]);
     else if(e[0]==='n')banner(e[1]);
