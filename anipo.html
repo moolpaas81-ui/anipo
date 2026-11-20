@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v29 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v30 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -263,7 +263,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v29</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v30</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -1115,9 +1115,55 @@ function clawHit(p){
 }
 function clawFx(x,y,f,hits){
   netEv(['k',x,y,f,hits?1:0]);
-  g.claw={x,y,f,t:0,hit:!!hits};g.slowT=hits?0.45:0.2;g.flashW=hits?0.22:0.1;g.shakeT=Math.max(g.shakeT,hits?0.35:0.15);
+  g.claw={x,y,f,t:0,hit:!!hits};g.flashC=null;g.slowT=hits?0.45:0.2;g.flashW=hits?0.22:0.1;g.shakeT=Math.max(g.shakeT,hits?0.35:0.15);
   if(settings.cam!==false)g.camHit={x,y:y+10,t:1.0};
   try{sfx.cry('tiger');sfx.boomS(hits?2:1);}catch(e){}
+}
+// ---------- 동물별 정타 효과 ----------
+const IMP={
+  eagle:{txt:'급습!',col:'#FFD54F',fl:'255,236,170',slow:0.35},
+  elephant:{txt:'쿵!!',col:'#CFD8DC',fl:'230,230,230',slow:0.45,shake:0.55},
+  hedgehog:{txt:'가시 폭풍!',col:'#D7A86E',fl:'255,225,190',slow:0.35},
+  mole:{txt:'지진!',col:'#BCAAA4',fl:'210,180,150',slow:0.3,shake:0.7},
+  turtle:{txt:'등껍질 강타!',col:'#AED581',fl:'210,240,190',slow:0.35},
+  bat:{txt:'흡혈!',col:'#FF5252',fl:'255,80,80',slow:0.4},
+  snake:{txt:'맹독!',col:'#9CCC65',fl:'150,230,90',slow:0.35},
+  seal:{txt:'물보라!',col:'#81D4FA',fl:'170,225,255',slow:0.35},
+  clownfish:{txt:'거품 팡!',col:'#FFAB91',fl:'255,210,200',slow:0.3}
+};
+function impactFx(type,x,y,f,ox,oy){netEv(['k',x,y,f,1,type,ox,oy]);impactLocal(type,x,y,f,ox,oy);}
+function impactLocal(type,x,y,f,ox,oy){
+  const d=IMP[type];if(!d)return;
+  g.imp={type,x,y,f,ox,oy,t:0};g.slowT=d.slow;g.flashW=0.22;g.flashC=d.fl;g.shakeT=Math.max(g.shakeT||0,d.shake||0.3);
+  if(settings.cam!==false)g.camHit={x,y:y+6,t:1.0};
+  try{sfx.cry(type);sfx.boomS(2);}catch(e){}
+  const P=(n,fn)=>{for(let i=0;i<n;i++)g.parts.push(fn(i));};
+  if(type==='eagle')P(18,i=>{const a=Math.random()*6.28,sp=60+Math.random()*120;return{kind:'drop',x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-40,life:0.9+Math.random()*0.5,max:1,color:i%2?'#6D4C41':'#FFFFFF',size:2+Math.random()*2};});
+  if(type==='elephant')P(26,i=>{const a=-Math.PI*Math.random(),sp=80+Math.random()*160;return{kind:'drop',x,y:y+10,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp*0.5,life:0.8+Math.random()*0.6,max:1,color:'rgba(190,170,140,.8)',size:3+Math.random()*4};});
+  if(type==='mole')P(16,i=>{const a=-Math.PI/2+(Math.random()-0.5)*1.4,sp=120+Math.random()*160;return{kind:'drop',x:x+(Math.random()-0.5)*40,y:y+10,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0.9,max:1,color:i%2?'#6D4C41':'#8D6E63',size:2.5+Math.random()*3};});
+  if(type==='snake')P(16,i=>({kind:'drop',x:x+(Math.random()-0.5)*40,y:y+(Math.random()-0.5)*20,vx:(Math.random()-0.5)*30,vy:-30-Math.random()*50,life:1+Math.random()*0.5,max:1,color:'rgba(140,220,80,.85)',size:2+Math.random()*3}));
+  if(type==='seal'||type==='clownfish')P(20,i=>{const a=-Math.PI*Math.random(),sp=90+Math.random()*150;return{kind:'drop',x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0.8+Math.random()*0.4,max:1,color:type==='seal'?'rgba(200,235,255,.95)':'rgba(255,200,190,.9)',size:1.5+Math.random()*2.5};});
+}
+function drawImpact(){
+  const I=g.imp;if(!I)return;const t=I.t,d=IMP[I.type];if(!d||t>1.1){g.imp=null;return;}
+  const a=t<0.6?1:Math.max(0,1-(t-0.6)/0.5),rev=Math.min(1,t/0.15),x=I.x,y=I.y;
+  ctx.save();ctx.globalAlpha=a;ctx.lineCap='round';
+  switch(I.type){
+    case 'eagle':ctx.strokeStyle='#FFF3C4';ctx.lineWidth=2.5;for(let i=0;i<9;i++){const an=i*0.7+0.3;let px=x,py=y;ctx.beginPath();ctx.moveTo(px,py);for(let k=1;k<=4;k++){px=x+Math.cos(an)*k*12*rev+((i*k)%3-1)*4;py=y+Math.sin(an)*k*12*rev+((i+k)%3-1)*4;ctx.lineTo(px,py);}ctx.stroke();}
+      ctx.globalAlpha=a*0.8;ctx.fillStyle='rgba(60,40,20,.55)';const sx=x-I.f*(260-t*520);ctx.beginPath();ctx.moveTo(sx,y-70);ctx.lineTo(sx-I.f*40,y-90);ctx.lineTo(sx-I.f*16,y-70);ctx.lineTo(sx-I.f*40,y-50);ctx.closePath();ctx.fill();break;
+    case 'elephant':for(let k=0;k<3;k++){const r=20+Math.max(0,t-k*0.12)*260;ctx.strokeStyle=`rgba(255,255,255,${Math.max(0,0.8-t*0.7)})`;ctx.lineWidth=6-k*1.5;ctx.beginPath();ctx.ellipse(x,y,r,r*0.45,0,0,7);ctx.stroke();}break;
+    case 'hedgehog':ctx.strokeStyle='#5D4037';ctx.lineWidth=2.4;for(let i=0;i<24;i++){const an=i/24*6.283,r0=10,r1=10+70*rev*(0.7+((i*7)%5)/10);ctx.beginPath();ctx.moveTo(x+Math.cos(an)*r0,y+Math.sin(an)*r0);ctx.lineTo(x+Math.cos(an)*r1,y+Math.sin(an)*r1);ctx.stroke();}break;
+    case 'mole':for(const [cl,lw] of [['#2b1a12',7],['#FFB74D',3]])for(const dir of [-1,1]){ctx.strokeStyle=cl;ctx.lineWidth=lw;ctx.beginPath();let px=x;ctx.moveTo(px,groundAt(px)+2);for(let k=1;k<=10;k++){px=x+dir*k*16*rev;ctx.lineTo(px,groundAt(clamp(px,0,W))+3+((k%2)?5:-2));}ctx.stroke();}break;
+    case 'turtle':ctx.strokeStyle='#C5E1A5';ctx.lineWidth=3;const hs=14*(0.6+rev*0.6);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){if(Math.abs(i)+Math.abs(j)>1&&!(i&&j))continue;const cx=x+i*hs*1.6+(j?hs*0.8:0),cy=y+j*hs*1.4;ctx.beginPath();for(let k=0;k<6;k++){const an=k*Math.PI/3;ctx[k?'lineTo':'moveTo'](cx+Math.cos(an)*hs,cy+Math.sin(an)*hs);}ctx.closePath();ctx.stroke();}break;
+    case 'bat':{const ox=I.ox!=null?I.ox:x,oy=I.oy!=null?I.oy:y;ctx.fillStyle='#E53935';for(let i=0;i<16;i++){const q=Math.min(1,Math.max(0,t*1.3-i*0.04));if(q<=0||q>=1)continue;const mx=(x+ox)/2,my=Math.min(y,oy)-60;const px=(1-q)*(1-q)*x+2*(1-q)*q*mx+q*q*ox,py=(1-q)*(1-q)*y+2*(1-q)*q*my+q*q*oy;ctx.beginPath();ctx.arc(px+((i%3)-1)*5,py+((i%2)?3:-3),3,0,7);ctx.fill();}}break;
+    case 'snake':ctx.fillStyle='rgba(120,200,60,.35)';ctx.beginPath();ctx.ellipse(x,y+6,40*rev,14*rev,0,0,7);ctx.fill();ctx.font=`22px ${FONT}`;ctx.textAlign='center';ctx.fillText('☠',x+Math.sin(t*9)*6,y-20-t*30);break;
+    case 'seal':ctx.fillStyle='#90A4AE';for(let i=0;i<8;i++){const an=-Math.PI*(i+0.5)/8,r=20+t*120,px=x+Math.cos(an)*r,py=y+Math.sin(an)*r+t*t*90;ctx.save();ctx.translate(px,py);ctx.rotate(an);ctx.beginPath();ctx.ellipse(0,0,7,3,0,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(-6,0);ctx.lineTo(-11,-3);ctx.lineTo(-11,3);ctx.fill();ctx.restore();}
+      ctx.strokeStyle='rgba(200,235,255,.9)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,y+8,30+t*80,Math.PI*1.1,Math.PI*1.9);ctx.stroke();break;
+    case 'clownfish':ctx.strokeStyle='rgba(225,245,255,.95)';ctx.lineWidth=2;for(let i=0;i<16;i++){const an=i/16*6.283,r=12+t*90,rr=Math.max(0,5-t*4);if(rr<=0)continue;ctx.beginPath();ctx.arc(x+Math.cos(an)*r,y+Math.sin(an)*r*0.7,rr+((i%3)),0,7);ctx.stroke();}break;
+  }
+  ctx.restore();
+  ctx.save();ctx.globalAlpha=a;ctx.textAlign='center';ctx.font=`900 30px ${FONT}`;ctx.lineWidth=5;ctx.strokeStyle='rgba(0,0,0,.7)';const ty=y-62-Math.min(1,t*4)*8;
+  ctx.strokeText(d.txt,x,ty);ctx.fillStyle=d.col;ctx.fillText(d.txt,x,ty);ctx.restore();
 }
 function drawClaw(){
   const C=g.claw;if(!C)return;const t=C.t,rev=Math.min(1,t/0.12),a=t<0.5?1:Math.max(0,1-(t-0.5)/0.5);if(a<=0){g.claw=null;return;}
@@ -1214,7 +1260,7 @@ function blast(p,hitUnit){
   if(c.volley){   // 가시 한 발: 작은 구멍, 작은 피해(합계는 턴 끝에 표시), 작은 튐
     carve(ex,ey,rad*0.6);
     for(const u of g.units){if(!u.alive)continue;let d=0;if(u===hitUnit)d=dmg;else{const dist=Math.hypot(u.x-ex,(u.y-uH(u)/2)-ey);if(dist<=rad)d=dmg*(1-0.5*dist/rad);}
-      if(d>0){const a0=damage(u,d,false,true);u._vd=(u._vd||0)+a0;}}
+      if(d>0){const a0=damage(u,d,false,true);u._vd=(u._vd||0)+a0;if(u.team!==p.owner.team&&a0>0){u._vn=(u._vn||0)+1;u._vo=p.owner;}}}
     for(let i=0;i<4;i++){const a=-Math.PI*Math.random();g.parts.push({kind:'shard',x:ex,y:ey,vx:Math.cos(a)*90,vy:Math.sin(a)*90,life:0.35,max:1,color:'#6D4C41',size:2.5,rot:a,vr:0});}
     if(!g._xb)boom(ex,ey,10,p.type,1,false);
     return false;}
@@ -1241,7 +1287,8 @@ function blast(p,hitUnit){
   const inten=Math.min(3,c.grade+(p.boost?1:0));
   boom(ex,ey,rad,p.type,inten,c.splash);
   if(c.splash)for(let i=0;i<8;i++){const a=-Math.PI*(i+0.5)/8;g.parts.push({kind:'shard',x:ex,y:ey,vx:Math.cos(a)*200,vy:Math.sin(a)*200,life:0.6,max:1,color:'#5D4037',size:4,rot:a,vr:0});}
-  if(direct)floatText(ex,ey-40,'정타!','#FFD54F');
+  if(direct&&!c.claw&&IMP[p.type]&&!(g.imp&&g.imp.t<0.5)){const tg=hitUnit||hitU;impactFx(p.type,tg?tg.x:ex,tg?tg.y-uH(tg)*0.5:ey,(tg?tg.x:ex)>=p.owner.x?1:-1,p.owner.x,p.owner.y-uH(p.owner)*0.6);}
+  else if(direct)floatText(ex,ey-40,'정타!','#FFD54F');
   return direct;
 }
 // 같이 날아가는 나머지 포탄 (호랑이 3발 동시)
@@ -1282,7 +1329,7 @@ function resolveShot(direct){
   if(checkEnd())return;
   const u=g.cur;
   if(g.extra&&g.extra.length){later(120,()=>resolveShot(direct));return;}
-  for(const v of g.units)if(v._vd){floatText(v.x,v.y-70,'가시 -'+v._vd,'#FF5252');v._vd=0;}
+  for(const v of g.units){if(v._vn>=6&&v._vo){impactFx('hedgehog',v.x,v.y-uH(v)*0.5,v.x>=v._vo.x?1:-1);}v._vn=0;v._vo=null;if(v._vd){floatText(v.x,v.y-70,'가시 -'+v._vd,'#FF5252');v._vd=0;}}
   if(!u.alive){g.burstLeft=0;g.phase='between';later(400,nextTurn);return;}
   if(g.burstLeft>0){g.burstDirect=g.burstDirect||direct;g.burstLeft--;g.phase='flying';
     later(200,()=>{if(g&&g.cur===u&&u.alive&&g.phase!=='over'){u.angle=clamp(u.angle+(Math.random()*4-2),0,90);fireShot(u.lastPower,true);}});return;}
@@ -1449,7 +1496,7 @@ function updateCam(dt){
   const vw=VW/cam.z/2,vh=VH/cam.z/2;cam.x=clamp(cam.x,vw,W-vw);cam.y=clamp(cam.y,Math.min(vh-90,H-vh),H-vh+(PORT?15:0));
 }
 function update(dt){
-  if(g.slowT>0){g.slowT-=dt;dt*=0.3;}if(g.flashW>0)g.flashW-=dt;if(g.claw)g.claw.t+=dt;
+  if(g.slowT>0){g.slowT-=dt;dt*=0.3;}if(g.flashW>0)g.flashW-=dt;if(g.claw)g.claw.t+=dt;if(g.imp)g.imp.t+=dt;
   fireHoldTick();updateFly(dt);
   if(g.remote)guestSmooth(dt);
   for(const v of g.units){if(!v.alive)continue;const t=tiltOf(v);v.tilt=v.tilt==null?t:v.tilt+(t-v.tilt)*Math.min(1,dt*10);}
@@ -1646,6 +1693,7 @@ function render(){
     ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.translate(-8,0);drawBottle(ctx,p.type,16);ctx.restore();
   }}
   if(g.claw)drawClaw();
+  if(g.imp)drawImpact();
   if(g.fly)drawCarrier({x:g.fly.x,y:g.fly.y,facing:g.fly.f,type:g.fly.u&&g.fly.u.type},true);
   // 폭발·파편
   for(const f of g.flashes){
@@ -1669,7 +1717,7 @@ function render(){
   }
   ctx.globalAlpha=1;
   ctx.restore();
-  if(g.flashW>0){ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0);ctx.fillStyle=`rgba(255,250,235,${Math.min(0.6,g.flashW*2.6)})`;ctx.fillRect(0,0,VW,VH);}
+  if(g.flashW>0){ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0);ctx.fillStyle=`rgba(${g.flashC||'255,250,235'},${Math.min(0.6,g.flashW*2.6)})`;ctx.fillRect(0,0,VW,VH);}
   drawHud();
 }
 function updateFly(dt){   // 돌을 떨군 독수리가 제자리로 돌아감 (보기용)
@@ -2631,7 +2679,8 @@ function applySnap(s){
   g.puddles=s.pd.map(a=>({x:a[0],w:a[1],color:a[2]||undefined,turns:a[3]}));
   for(const e of s.ev){
     if(e[0]==='b')boom(e[1],e[2],e[3],e[4],e[5],!!e[6]);
-    else if(e[0]==='k'){g.claw={x:e[1],y:e[2],f:e[3],t:0,hit:!!e[4]};g.slowT=e[4]?0.45:0.2;g.flashW=e[4]?0.22:0.1;g.shakeT=Math.max(g.shakeT||0,e[4]?0.35:0.15);if(settings.cam!==false)g.camHit={x:e[1],y:e[2]+10,t:1.0};try{sfx.cry('tiger');sfx.boomS(e[4]?2:1);}catch(err){}}
+    else if(e[0]==='k'&&e[5]){impactLocal(e[5],e[1],e[2],e[3],e[6],e[7]);}
+    else if(e[0]==='k'){g.claw={x:e[1],y:e[2],f:e[3],t:0,hit:!!e[4]};g.flashC=null;g.slowT=e[4]?0.45:0.2;g.flashW=e[4]?0.22:0.1;g.shakeT=Math.max(g.shakeT||0,e[4]?0.35:0.15);if(settings.cam!==false)g.camHit={x:e[1],y:e[2]+10,t:1.0};try{sfx.cry('tiger');sfx.boomS(e[4]?2:1);}catch(err){}}
     else if(e[0]==='t')floatText(e[1],e[2],e[3],e[4]);
     else if(e[0]==='c')carve(e[1],e[2],e[3]);
     else if(e[0]==='n')banner(e[1]);
@@ -2869,7 +2918,7 @@ if(window.SBF_ASSETS)applyAssets(window.SBF_ASSETS);
 setTimeout(loadDeco,600);
 resize();openTitle();requestAnimationFrame(frame);
 if(!Object.keys(REAL.chars).length){idbGet('assets').then(t=>{if(t){try{if(applyAssets(JSON.parse(t))&&!g&&!$('title').classList.contains('hide'))renderPhotoRow();}catch(e){}}});}
-window.__sbf={get g(){return g;},startStage,useItem,fireShot,aiTurn,endStage,sfx,bgm,carve,inWater,physStep};
+window.__sbf={get g(){return g;},startStage,useItem,fireShot,aiTurn,endStage,sfx,bgm,carve,inWater,physStep,impactLocal};
 })();
 </script>
 </body>
