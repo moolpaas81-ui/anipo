@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 동물 포트리스</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v27 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.20 v28 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -197,7 +197,7 @@ body.port .cpu{flex:1;text-align:center}
     <tr><th>동물</th><th>무기</th><th>파워</th><th>체력</th><th>특징</th></tr>
     <tr><td>코끼리</td><td>대형 폭탄</td><td>상</td><td>70</td><td>폭발 반경 최대, 탄속 느림</td></tr>
     <tr><td>거북이</td><td>중포탄</td><td>상</td><td>70</td><td>받는 피해 20% 감소</td></tr>
-    <tr><td>호랑이</td><td>3발 동시탄</td><td>중</td><td>90</td><td>한 번에 3발이 부채꼴로 동시에 날아감(발당 피해 작음)</td></tr>
+    <tr><td>호랑이</td><td>돌진 할퀴기</td><td>중</td><td>90</td><td>[발사]를 누른 힘만큼 땅 위를 달려가(<b>힘 = 거리</b>, 각도는 쓰지 않음) 도착한 곳에서 앞발로 할퀴고 돌아옴. 도착 지점 좌우 약 3m 안의 적에게 피해 28</td></tr>
     <tr><td>고슴도치</td><td>가시 18발</td><td>중</td><td>90</td><td>등에서 가시 18발이 부채꼴로 한꺼번에 날아감. 발당 피해 약 3, 많이 맞힐수록 큰 피해(정타 보너스 없음)</td></tr>
     <tr><td>두더지</td><td>굴착탄</td><td>중</td><td>90</td><td>땅을 깊게 파고 폭발</td></tr>
     <tr><td>독수리</td><td>돌 투하</td><td>중</td><td>90</td><td>각도·힘으로 쏘면 독수리가 돌을 들고 포탄 길을 따라 날아가 가장 높은 곳에서 떨굼(떨어지는 곳은 포탄과 같음). 바람 영향 적음</td></tr>
@@ -263,7 +263,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v27</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.20 v28</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -323,7 +323,7 @@ const CHARS={
   turtle:{name:'거북이',job:'중포탄',emoji:'🐢',hp:70,grade:3,dmg:30,rad:28,spd:0.95,wind:1,armor:0.8,size:44,fx:'파워 상 · 받는 피해 -20%'},
   bat:{name:'박쥐',job:'흡혈탄 투하',emoji:'🦇',hp:110,grade:1,dmg:16,rad:22,spd:1.05,wind:1,leech:0.05,carry:true,size:41,fx:'흡혈탄을 들고 포탄처럼 날아가 가장 높은 곳에서 떨굼 · 준 피해 5% 회복'},
   snake:{name:'뱀',job:'독 장판탄',emoji:'🐍',hp:110,grade:1,dmg:16,rad:22,spd:1,wind:1,puddle:true,puddleColor:'rgba(110,190,40,.6)',size:44,fx:'파워 하 · 독 장판'},
-  tiger:{name:'호랑이',job:'3발 동시탄',emoji:'🐯',hp:90,grade:2,dmg:11,rad:16,spd:1.05,wind:1,burst:3,size:53,fx:'파워 중 · 3발 동시 발사'},
+  tiger:{name:'호랑이',job:'돌진 할퀴기',emoji:'🐯',hp:90,grade:2,dmg:28,rad:26,spd:1.05,wind:1,runner:true,size:53,fx:'힘 = 달려갈 거리 · 도착한 곳에서 앞발로 할퀴고 돌아옴(피해 28)'},
   seal:{name:'물개',job:'물고기탄',emoji:'🦭',hp:100,grade:2,dmg:25,rad:24,spd:1.0,wind:0.8,swim:true,size:38,fx:'파워 중 · 물속에서 느려지지 않음'},
   clownfish:{name:'흰동가리',job:'튕김 거품탄',emoji:'🐠',hp:90,grade:2,dmg:21,rad:22,spd:1.05,wind:0.9,swim:true,bounce:true,size:30,fx:'파워 중 · 땅에 한 번 튕긴 뒤 폭발 · 물속에서 빠름'}
 };
@@ -1003,7 +1003,8 @@ function drawRange(){
   R.marks.forEach((m,i)=>{const my=groundAt(m.x),a=0.35+0.65*(i+1)/R.marks.length;ctx.globalAlpha=a;ctx.strokeStyle='#FF7043';ctx.lineWidth=2.5;
     ctx.beginPath();ctx.moveTo(m.x-5,my-9);ctx.lineTo(m.x+5,my+1);ctx.moveTo(m.x+5,my-9);ctx.lineTo(m.x-5,my+1);ctx.stroke();});ctx.globalAlpha=1;
   // 예상 궤적
-  if(R.guide&&g.phase==='aim'&&g.cur===u&&CHARS[u.type].bomber){const c=CHARS[u.type],pw=(g.charging?g.charge:(u.lastPower||50))*(inWater(u)?0.85:1),pl=bomberPlan(u,u.facing,u.angle,pw);
+  if(R.guide&&g.phase==='aim'&&g.cur===u&&CHARS[u.type].runner){}
+  else if(R.guide&&g.phase==='aim'&&g.cur===u&&CHARS[u.type].bomber){const c=CHARS[u.type],pw=(g.charging?g.charge:(u.lastPower||50))*(inWater(u)?0.85:1),pl=bomberPlan(u,u.facing,u.angle,pw);
     ctx.strokeStyle='rgba(255,255,255,.5)';ctx.setLineDash([3,6]);ctx.beginPath();ctx.moveTo(u.x,pl.alt);ctx.lineTo(pl.dropX,pl.alt);ctx.stroke();ctx.setLineDash([]);
     const v0=dropV(c,u.facing),o={x:pl.dropX,y:pl.alt,vx:v0.vx,vy:v0.vy};ctx.fillStyle='rgba(255,255,255,.75)';
     for(let i=0;i<600;i++){physStep(o,c,1/60,false);if(i%3===0){ctx.beginPath();ctx.arc(o.x,o.y,1.6,0,7);ctx.fill();}const ix=Math.round(o.x);if(o.x<-40||o.x>W+40||o.y>H+40)break;if(ix>=0&&ix<=W&&o.y>=g.h[ix]){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(o.x,o.y,5,0,7);ctx.stroke();break;}}}
@@ -1096,6 +1097,44 @@ function updateCarrier(p,dt){   // 독수리가 날아가는 구간: 올라간 �
   const k=d>0?Math.min(1,st/d):0;p.vx=dx/dt*k;p.vy=dy/dt*k;p.x+=dx*k;p.y+=dy*k;
   p.trail.length=0;
 }
+// ---------- 호랑이 돌진 할퀴기 ----------
+const RUN_GO=520,RUN_BACK=640,CLAW_REACH=26;
+function runTarget(u,power){return clamp(u.x+u.facing*clamp(power,5,100)/100*(W-60),15,W-15);}
+function updateRunner(p,dt){
+  if(p.stage===0){const d=p.tx-p.x,st=RUN_GO*dt;if(Math.abs(d)<=st){p.x=p.tx;p.stage=1;p.t=0.5;clawHit(p);}else p.x+=Math.sign(d)*st;}
+  else if(p.stage===1){p.t-=dt;if(p.t<=0)p.stage=2;}
+  else{const d=p.x0-p.x,st=RUN_BACK*dt;if(Math.abs(d)<=st){g.proj=null;g.phase='settle';later(300,()=>resolveShot(false));return;}p.x+=Math.sign(d)*st;}
+  p.y=groundAt(p.x);p.vx=p.stage===0?p.facing*RUN_GO:p.stage===2?-p.facing*RUN_BACK:0;p.vy=0;
+}
+function clawHit(p){
+  if(g.range)rangeLand(p.x);
+  const c=CHARS[p.type],dmg=c.dmg*(p.boost?1.3:1);let hits=0;
+  for(const v of g.units){if(!v.alive||v===p.owner)continue;if(Math.abs(v.x-p.x)<=CLAW_REACH+uW(v)*0.5&&Math.abs(v.y-p.y)<60){damage(v,dmg);v.vx=(v.vx||0);hits++;}}
+  clawFx(p.x+p.facing*14,p.y-uH(p.owner)*0.55,p.facing,hits);
+  if(!hits)floatText(p.x,p.y-80,'헛손질!','#fff');
+}
+function clawFx(x,y,f,hits){
+  netEv(['k',x,y,f,hits?1:0]);
+  g.claw={x,y,f,t:0,hit:!!hits};g.slowT=hits?0.45:0.2;g.flashW=hits?0.22:0.1;g.shakeT=Math.max(g.shakeT,hits?0.35:0.15);
+  if(settings.cam!==false)g.camHit={x,y:y+10,t:1.0};
+  try{sfx.cry('tiger');sfx.boomS(hits?2:1);}catch(e){}
+}
+function drawClaw(){
+  const C=g.claw;if(!C)return;const t=C.t,rev=Math.min(1,t/0.12),a=t<0.5?1:Math.max(0,1-(t-0.5)/0.5);if(a<=0){g.claw=null;return;}
+  ctx.save();ctx.translate(C.x,C.y);ctx.scale(C.f,1);ctx.globalAlpha=a;ctx.lineCap='round';
+  for(let i=0;i<3;i++){const ox=-16+i*16,len=70*rev;
+    ctx.strokeStyle='rgba(255,120,40,.55)';ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(ox-20,-34);ctx.lineTo(ox-20+len*0.55,-34+len*0.85);ctx.stroke();
+    ctx.strokeStyle='#FFF8E1';ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(ox-20,-34);ctx.lineTo(ox-20+len*0.55,-34+len*0.85);ctx.stroke();}
+  ctx.restore();
+  ctx.save();ctx.globalAlpha=a;ctx.textAlign='center';ctx.font=`900 ${C.hit?30:20}px ${FONT}`;ctx.lineWidth=5;ctx.strokeStyle='rgba(0,0,0,.7)';
+  const ty=C.y-58-Math.min(1,t*4)*8;ctx.strokeText(C.hit?'할퀴기!!':'할퀴기',C.x,ty);ctx.fillStyle=C.hit?'#FF7043':'#FFE0B2';ctx.fillText(C.hit?'할퀴기!!':'할퀴기',C.x,ty);ctx.restore();
+}
+function drawRunner(p){
+  const u=p.owner||g.cur;if(!u)return;const bob=Math.abs(Math.sin(performance.now()/60))*4*(p.stage===1?0:1);
+  const keep={x:u.x,y:u.y,f:u.facing,t:u.tilt,th:u.throwT};u.x=p.x;u.y=p.y-bob;u.facing=p.stage===2?-(p.facing||1):(p.facing||1);u.tilt=0;u.throwT=p.stage===1?0.3:0;
+  u._drawRun=true;drawUnit(u);u._drawRun=false;u.x=keep.x;u.y=keep.y;u.facing=keep.f;u.tilt=keep.t;u.throwT=keep.th;
+  for(let i=0;i<2;i++)if(p.stage!==1&&Math.random()<0.5)g.parts.push({kind:'drop',x:p.x-(p.stage===2?-1:1)*(p.facing||1)*10,y:p.y-2,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:0.35,max:1,color:'rgba(200,180,140,.7)',size:1.5+Math.random()*1.5});
+}
 function fireShot(power,isBurst){
   const u=g.cur,c=CHARS[u.type];
   power=clamp(power,5,100);
@@ -1104,6 +1143,7 @@ function fireShot(power,isBurst){
   const a=effAngle(u)*Math.PI/180,v=power/100*VMAX*c.spd,hp=handPos(u);
   g.proj={x:hp.x,y:hp.y,vx:Math.cos(a)*u.facing*v,vy:-Math.sin(a)*v,type:u.type,owner:u,boost:g.boost,age:0,spin:0,trail:[]};
   if(c.carry){g.proj.carrier=true;g.proj.facing=u.facing;}
+  if(c.runner){Object.assign(g.proj,{runner:true,stage:0,facing:u.facing,x0:u.x,x:u.x,y:u.y,tx:runTarget(u,power)});}
   g.boost=false;g.phase='flying';u.throwT=0.3;sfx.throw();
   if(!isBurst){sfx.cry(u.type);netEv(['s','cry',u.type]);floatText(u.x,u.y-sprH(u.type)-22,CRY_TXT[u.type]||'',u.color||'#fff');}
   g.extra=[];
@@ -1133,6 +1173,7 @@ function updateProjectile(dt){
     if(p.t>=1)penaltyHit(p);
     return;
   }
+  if(p.runner){updateRunner(p,dt);return;}
   if(p.carrier)dt*=0.72;   // 새가 들고 나는 동안은 같은 길을 조금 천천히
   const c=CHARS[p.type],steps=4,sdt=dt/steps;
   for(let s=0;s<steps;s++){
@@ -1306,7 +1347,8 @@ function simShot(u,facing,a,p,wind,c,t){
   return{x:9999};
 }
 function aiSolve(u,t,wind){
-  const c=CHARS[u.type],facing=t.x>=u.x?1:-1;let best={a:45,p:70,s:1e9};
+  const c=CHARS[u.type],facing=t.x>=u.x?1:-1;
+  if(c.runner)return{a:45,p:clamp(Math.abs(t.x-u.x)/(W-60)*100,5,100),s:0};let best={a:45,p:70,s:1e9};
   for(let a=15;a<=80;a+=5)for(let p=20;p<=100;p+=2){
     const r=c.bomber?simBomber(u,facing,a,p,wind,c,t):simShot(u,facing,a,p,wind,c,t);
     let s=r.hit?0:Math.abs(r.x-t.x);if(r.self)s+=1000;s+=Math.abs(a-45)*0.05;
@@ -1406,6 +1448,7 @@ function updateCam(dt){
   const vw=VW/cam.z/2,vh=VH/cam.z/2;cam.x=clamp(cam.x,vw,W-vw);cam.y=clamp(cam.y,Math.min(vh-90,H-vh),H-vh+(PORT?15:0));
 }
 function update(dt){
+  if(g.slowT>0){g.slowT-=dt;dt*=0.3;}if(g.flashW>0)g.flashW-=dt;if(g.claw)g.claw.t+=dt;
   fireHoldTick();updateFly(dt);
   if(g.remote)guestSmooth(dt);
   for(const v of g.units){if(!v.alive)continue;const t=tiltOf(v);v.tilt=v.tilt==null?t:v.tilt+(t-v.tilt)*Math.min(1,dt*10);}
@@ -1565,7 +1608,12 @@ function render(){
   if(g.range)drawRange();
   // 조준선
   const u=g.cur;
-  if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'&&!aimSecret(u)&&CHARS[u.type].bomber){
+  if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'&&!aimSecret(u)&&CHARS[u.type].runner){
+    const pw=g.charging?g.charge:(u.lastPower||0),tx=runTarget(u,Math.max(5,pw)),gy=groundAt(tx);
+    ctx.strokeStyle='rgba(255,200,120,.8)';ctx.lineWidth=2;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(u.x,u.y-4);for(let x=u.x;u.facing>0?x<=tx:x>=tx;x+=u.facing*8)ctx.lineTo(x,groundAt(x)-4);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=g.charging?'#FF8A65':'rgba(255,255,255,.6)';for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(tx+(i-1)*6,gy-16,2.2,4,0,0,7);ctx.fill();}ctx.beginPath();ctx.ellipse(tx,gy-8,5,4,0,0,7);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font=`bold 11px ${FONT}`;ctx.textAlign='center';ctx.fillText(g.charging?'달려갈 곳':'지난 힘',tx,gy-26);}
+  else if(u&&u.alive&&g.phase==='aim'&&!u.ai&&g.mode!=='penalty'&&!aimSecret(u)&&CHARS[u.type].bomber){
     const pl=bomberPlan(u,u.facing,u.angle,100),y=pl.alt;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.5;ctx.setLineDash([5,5]);
     ctx.beginPath();ctx.moveTo(u.x,y);ctx.lineTo(u.x+u.facing*90,y);ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle='#fff';ctx.font=`bold 11px ${FONT}`;ctx.textAlign='center';ctx.fillText(`비행 높이 ${Math.round(u.angle)}° ${u.facing>0?'→':'←'}`,u.x+u.facing*45,y-6);}
@@ -1592,9 +1640,11 @@ function render(){
     ctx.globalAlpha=1;
     if(p.homing){ctx.fillStyle='rgba(255,60,60,.35)';ctx.beginPath();ctx.arc(p.x,p.y,10,0,7);ctx.fill();}
     if(p.boost){ctx.fillStyle='rgba(255,200,40,.35)';ctx.beginPath();ctx.arc(p.x,p.y,11,0,7);ctx.fill();}
+    if(p.runner){drawRunner(p);continue;}
     if(p.carrier||p.diving){drawCarrier(p,!!p.diving);continue;}
     ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.translate(-8,0);drawBottle(ctx,p.type,16);ctx.restore();
   }}
+  if(g.claw)drawClaw();
   if(g.fly)drawCarrier({x:g.fly.x,y:g.fly.y,facing:g.fly.f,type:g.fly.u&&g.fly.u.type},true);
   // 폭발·파편
   for(const f of g.flashes){
@@ -1618,6 +1668,7 @@ function render(){
   }
   ctx.globalAlpha=1;
   ctx.restore();
+  if(g.flashW>0){ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0);ctx.fillStyle=`rgba(255,250,235,${Math.min(0.6,g.flashW*2.6)})`;ctx.fillRect(0,0,VW,VH);}
   drawHud();
 }
 function updateFly(dt){   // 돌을 떨군 독수리가 제자리로 돌아감 (보기용)
@@ -1637,7 +1688,7 @@ function drawCarrier(p,noRock){
 }
 function drawUnit(u){
   if(u.y>H+50)return;
-  if((g.proj&&(g.proj.carrier||g.proj.diving)&&g.cur===u&&(CHARS[u.type].bomber||CHARS[u.type].carry))||(g.fly&&g.fly.u===u))return;   // 날아간 동안은 제자리에 없음
+  if((g.proj&&(g.proj.carrier||g.proj.diving)&&g.cur===u&&(CHARS[u.type].bomber||CHARS[u.type].carry))||(g.fly&&g.fly.u===u)||(!u._drawRun&&g.proj&&g.proj.runner&&g.cur===u))return;   // 날아간 동안은 제자리에 없음
   const c=ctx;
   if(!u.alive){
     c.save();c.translate(u.x,u.y);c.rotate(-Math.PI/2*u.facing);
@@ -1835,7 +1886,7 @@ function doFireDown(ctrl){
   if(g.mode==='penalty'){if(!g.fired)launchPenalty();return;}
   g.charging=true;g.charge=0;
 }
-function guestLocalShot(pw){const u=g.cur;if(!u)return;if(CHARS[u.type].bomber&&false){u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();return;}const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,v=clamp(pw,5,100)*(inWater(u)?0.85:1)/100*VMAX*c.spd,hp=handPos(u);
+function guestLocalShot(pw){const u=g.cur;if(!u)return;if(CHARS[u.type].runner){u.throwT=0.3;sfx.cry(u.type);NET.cryAt=performance.now();return;}if(CHARS[u.type].bomber&&false){u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();return;}const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,v=clamp(pw,5,100)*(inWater(u)?0.85:1)/100*VMAX*c.spd,hp=handPos(u);
   g.proj={x:hp.x,y:hp.y,trail:[],type:u.type,spin:0,boost:g.boost,_local:true,_lt:performance.now(),_lvx:Math.cos(a)*u.facing*v,_lvy:-Math.sin(a)*v,carrier:!!c.carry,facing:u.facing};
   u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();}
 function fireUp(){const was=fireHeld;fireHeld=false;if(NET.role==='guest'){if(NET.lc&&g){guestSync();const pw=Math.round(g.charge*10)/10;netSend(NET.dc,{t:'fu',p:pw,a:g.cur?Math.round(g.cur.angle*10)/10:null});NET.lc=false;NET.lcHold=performance.now();g.charging=false;guestLocalShot(pw);}else if(was)netSend(NET.dc,{t:'fu'});return;}if(was)doFireUp(NET.myId);}
@@ -2557,7 +2608,7 @@ function makeSnap(){
     ch:g.charging?1:0,cg:Math.round(g.charge),ml:Math.round(g.moveLeft),sl:g.shotsLeft,xu:g.extraUsed?1:0,tg:g.target?U.indexOf(g.target):-1,
     u:U.map(u=>[Math.round(u.x*10)/10,Math.round(u.y*10)/10,u.hp,u.alive?1:0,u.facing,Math.round(u.angle),Math.round(u.lastPower),u.throwT>0?1:0,u.hurtT>0?1:0,u.items.bomb,u.items.penalty,u.items.triple]),
     ex:(g.extra||[]).map(e=>[Math.round(e.x),Math.round(e.y),e.type]),
-    pr:g.proj?[Math.round(g.proj.x),Math.round(g.proj.y),g.proj.type,Math.round(g.proj.spin*100)/100,g.proj.homing?1:0,g.proj.boost?1:0,Math.round(g.proj.vx||0),Math.round(g.proj.vy||0),g.proj.carrier?(g.proj.facing>0?1:2):g.proj.diving?(g.proj.facing>0?3:4):0]:null,
+    pr:g.proj?[Math.round(g.proj.x),Math.round(g.proj.y),g.proj.type,Math.round(g.proj.spin*100)/100,g.proj.homing?1:0,g.proj.boost?1:0,Math.round(g.proj.vx||0),Math.round(g.proj.vy||0),g.proj.carrier?(g.proj.facing>0?1:2):g.proj.diving?(g.proj.facing>0?3:4):g.proj.runner?(g.proj.facing>0?5:6)+(g.proj.stage===2?2:g.proj.stage===1?4:0):0]:null,
     pd:g.puddles.map(p=>[Math.round(p.x),p.w,p.color||'',p.turns]),ev:NET.ev.splice(0)};
 }
 function applySnap(s){
@@ -2572,13 +2623,14 @@ function applySnap(s){
     u.throwT=a[7]?0.1:0;u.hurtT=a[8]?0.2:0;u.items={bomb:a[9],penalty:a[10],triple:a[11],heal:0};});
   const wasC=!!(g.proj&&(g.proj.carrier||g.proj.diving)),oldF=g.proj&&g.proj.facing,oldX=g.proj&&g.proj.x,oldY=g.proj&&g.proj.y;
   if(s.pr){let p=g.proj;const fresh=!p||p.type!==s.pr[2]||(!p._nt&&!p._local);if(fresh){p={trail:[],x:s.pr[0],y:s.pr[1]};}p._local=false;
-    p._nx=s.pr[0];p._ny=s.pr[1];p._vx=s.pr[6]||0;p._vy=s.pr[7]||0;p._nt=performance.now();p.type=s.pr[2];p.spin=s.pr[3];p.homing=!!s.pr[4];p.boost=!!s.pr[5];const m8=s.pr[8]||0;p.carrier=m8===1||m8===2;p.diving=m8===3||m8===4;p.facing=m8===2||m8===4?-1:m8?1:(oldF||1);g.proj=p;}
+    p._nx=s.pr[0];p._ny=s.pr[1];p._vx=s.pr[6]||0;p._vy=s.pr[7]||0;p._nt=performance.now();p.type=s.pr[2];p.spin=s.pr[3];p.homing=!!s.pr[4];p.boost=!!s.pr[5];const m8=s.pr[8]||0;p.carrier=m8===1||m8===2;p.diving=m8===3||m8===4;p.runner=m8>=5;p.stage=m8>=9?1:m8>=7?2:0;p.facing=m8>=5?((m8-5)%2?-1:1):m8===2||m8===4?-1:m8?1:(oldF||1);g.proj=p;}
   else if(!(g.proj&&g.proj._local&&performance.now()-g.proj._lt<1500))g.proj=null;
   {const nowAir=!!(g.proj&&(g.proj.carrier||g.proj.diving));if(wasC&&!nowAir&&g.cur&&!g.fly)g.fly={x:oldX,y:oldY,f:-(oldF||1),u:g.cur};}
   {const ex=s.ex||[],old=g.extra||[];g.extra=ex.map((a,i)=>{const o=old[i]&&old[i].type===a[2]?old[i]:{x:a[0],y:a[1],trail:[],spin:0,type:a[2]};o._tx=a[0];o._ty=a[1];o.type=a[2];return o;});}
   g.puddles=s.pd.map(a=>({x:a[0],w:a[1],color:a[2]||undefined,turns:a[3]}));
   for(const e of s.ev){
     if(e[0]==='b')boom(e[1],e[2],e[3],e[4],e[5],!!e[6]);
+    else if(e[0]==='k'){g.claw={x:e[1],y:e[2],f:e[3],t:0,hit:!!e[4]};g.slowT=e[4]?0.45:0.2;g.flashW=e[4]?0.22:0.1;g.shakeT=Math.max(g.shakeT||0,e[4]?0.35:0.15);if(settings.cam!==false)g.camHit={x:e[1],y:e[2]+10,t:1.0};try{sfx.cry('tiger');sfx.boomS(e[4]?2:1);}catch(err){}}
     else if(e[0]==='t')floatText(e[1],e[2],e[3],e[4]);
     else if(e[0]==='c')carve(e[1],e[2],e[3]);
     else if(e[0]==='n')banner(e[1]);
