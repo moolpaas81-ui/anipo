@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v41 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v42 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -264,7 +264,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v41</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v42</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -1231,6 +1231,7 @@ function genCanyon(seed){
 // 동물 자리: 바위 턱 > 기둥 바위 > 가운데 > 꼭대기 순서로
 const SPOT_PREF={over:0,ledge:1,butte:2,center:3,mesa:4};
 function canyonSpots(spots,side){return spots.filter(s=>side==null||(side<0?s.x<W/2:s.x>W/2)).sort((a,b)=>SPOT_PREF[a.k]-SPOT_PREF[b.k]);}
+function shuf(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}   // 자리 무작위(배치도 운)
 function spotX(s,r){return Math.round(s.x+(r()-0.5)*6);}
 function canyonArt(c,seed){   // 지층 줄무늬 + 세로 얼룩
   const r=mulberry32(seed+7);let y=40;
@@ -1484,7 +1485,7 @@ function startStage(si,picks,mi,campaign){
   picks.forEach((type,i)=>{const seg=W*0.36/picks.length;P.push(mkUnit('p',type,i,spawnX(40+i*seg,40+(i+1)*seg)));});
   for(let i=0;i<st.c;i++){const type=ORDER[Math.random()*ORDER.length|0],seg=(W*0.47-30)/st.c;C.push(mkUnit('c',type,i,spawnX(W*0.53+i*seg,W*0.53+(i+1)*seg)));}
   g.units=P.concat(C);
-  if(mp.spots){const rr=mulberry32(seed+5),Ls=canyonSpots(mp.spots,-1),Rs=canyonSpots(mp.spots,1);P.forEach((u,i)=>{if(Ls[i])u.x=spotX(Ls[i],rr);});C.forEach((u,i)=>{if(Rs[i])u.x=spotX(Rs[i],rr);});}
+  if(mp.spots){const rr=mulberry32(seed+5),Ls=shuf(mp.spots.filter(s=>s.x<W/2),rr),Rs=shuf(mp.spots.filter(s=>s.x>W/2),rr);P.forEach((u,i)=>{if(Ls[i])u.x=spotX(Ls[i],rr);});C.forEach((u,i)=>{if(Rs[i])u.x=spotX(Rs[i],rr);});}
   for(const u of g.units)u.y=groundAt(u.x);
   clearObsNearUnits();
   if(campaign){const run=store.get('run',{stage:si,lives:MAX_LIVES});g.lives=run.lives;}
@@ -1512,7 +1513,7 @@ function startRange(type,mi){
      range:{type,shots:[],hits:0,n:0,guide:store.get('rangeGuide',true),wm,tg:null,marks:[]}};
   bg=mp.bg;terrainArt=mp.art;g.deco=mp.deco;g.sea=MAPS[mi].sea?{y:SEA_Y}:null;g.plats=mp.plats||null;rebuildPH();
   {const hs=Array.from(g.h).sort((p,q)=>p-q);g.T=hs[Math.floor(hs.length*0.6)];}
-  const u=mkUnit('p',type,0,spawnX(50,140));if(mp.spots){const s=canyonSpots(mp.spots,-1)[0];if(s)u.x=Math.round(s.x);}u.y=groundAt(u.x);u.label='나';g.units=[u];
+  const u=mkUnit('p',type,0,spawnX(50,140));if(mp.spots){const s=shuf(mp.spots.filter(s=>s.x<W/2),Math.random)[0];if(s)u.x=Math.round(s.x);}u.y=groundAt(u.x);u.label='나';g.units=[u];
   clearObsNearUnits();rangeTarget();
   hideAll();resize();renderRangeBox();
   banner('연습장 · 시간 제한 없음 · 과녁을 맞혀 보세요');later(900,nextTurn);wake();
@@ -3212,8 +3213,7 @@ function startMatch(cfg){
   {const hs=Array.from(g.h).sort((p,q)=>p-q);g.T=hs[Math.floor(hs.length*0.6)];}
   cfg.players.forEach((p,i)=>{let x=cfg.xs&&cfg.xs[i]!=null?cfg.xs[i]:(n===1?W/2:70+i*((W-140)/(n-1)));for(let k=0;k<30&&inLake(x);k++)x+=x<W/2?8:-8;const u=mkUnit('m'+p.id,CHARS[p.type]?p.type:'tiger',i,x);
     u.ai=false;u.ctrl=p.id;u.label=p.name;u.color=PCOL[i];u.facing=x<W/2?1:-1;u.y=groundAt(x);g.units.push(u);});
-  if(mp.spots){const rr=mulberry32(seed+5),Ls=canyonSpots(mp.spots,-1),Rs=canyonSpots(mp.spots,1),mix=[];for(let i=0;i<Math.max(Ls.length,Rs.length);i++){if(Ls[i])mix.push(Ls[i]);if(Rs[i])mix.push(Rs[i]);}
-    const sp=mix.slice(0,g.units.length).sort((a,b)=>a.x-b.x);
+  if(mp.spots){const rr=mulberry32(seed+5),sp=shuf(mp.spots,rr).slice(0,g.units.length);
     for(let i=sp.length-1;i>0;i--){const j=Math.floor(rr()*(i+1));[sp[i],sp[j]]=[sp[j],sp[i]];}
     g.units.forEach((u,i)=>{if(sp[i]){u.x=spotX(sp[i],rr);u.y=groundAt(u.x);u.facing=u.x<W/2?1:-1;}});}
   clearObsNearUnits();
