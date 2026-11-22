@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v38 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v39 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -181,7 +181,6 @@ body.port .cpu{flex:1;text-align:center}
   키보드: ←→ 이동, ↑↓ 각도, 스페이스 누르고 있다 떼기 발사, 1~3 아이템, Esc 메뉴
   <h3>규칙</h3>
   · 턴당 20초. 시간이 지나면 쏘지 않고 턴을 넘깁니다.<br>
-  · 상대 몸에 직접 맞히면(정타) 한 번 더 쏠 수 있습니다(턴당 1회).<br>
   · 아이템은 턴당 1개, 쏘기 전에만 쓸 수 있고 판마다 1번씩입니다.<br>
   · 컴퓨터와 할 때는 내 동물 1마리를 고릅니다. 나와 컴퓨터 편이 번갈아 쏩니다. 적은 발밑 색 고리와 이름표(적1, 적2…)로 구분합니다.<br>
   · [새 게임]은 목숨 2개(♥♥)로 시작합니다. 지면 목숨이 1개 줄고, 남아 있으면 같은 단계부터 이어할 수 있습니다. 목숨이 0이 되면 게임 오버입니다. 진행 상황은 기기에 저장되어 나중에 [이어하기]로 계속할 수 있습니다.<br>
@@ -218,8 +217,8 @@ body.port .cpu{flex:1;text-align:center}
   <h3>아이템</h3>
   <table>
     <tr><td>파워업</td><td>다음 한 발의 위력·반경 +30%, 자기 체력 -10</td></tr>
-    <tr><td>유도탄</td><td>상대를 골라 유도탄 발사(반드시 명중). 상대 체력이 70% 이상이면 남은 체력의 30%, 70% 미만이면 50% 감소. 정타 추가 발사 없음</td></tr>
-    <tr><td>3연속</td><td>이번 턴 3번 쏘기(2·3번째는 각 5초). 정타 추가 발사 없음</td></tr>
+    <tr><td>유도탄</td><td>상대를 골라 유도탄 발사(반드시 명중). 상대 체력이 70% 이상이면 남은 체력의 30%, 70% 미만이면 50% 감소</td></tr>
+    <tr><td>2연속</td><td>한 번 쏘면 같은 힘·각도로 두 번째 발이 자동으로 나감</td></tr>
   </table>
   <div class="row"><button class="b pri" id="helpClose">닫기</button></div>
 </div></div>
@@ -265,7 +264,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v38</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v39</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -356,7 +355,7 @@ const WIND_SRC=['fan','fan','ac','fan','ac'];
 const MAX_LIVES=2;
 function hearts(n){return '♥'.repeat(Math.max(0,n))+'♡'.repeat(Math.max(0,MAX_LIVES-n));}
 function confirmNew(){return window.confirm('이어하던 게임이 지워지고 STAGE 1부터 다시 시작합니다. 새 게임을 할까요?');}
-const ITEM_NAMES={bomb:'파워업',penalty:'유도탄',triple:'3연속'};
+const ITEM_NAMES={bomb:'파워업',penalty:'유도탄',triple:'2연속'};
 
 const $=id=>document.getElementById(id);
 // ---------- 실사 이미지 (있으면 사용, 없으면 그림으로 대체) ----------
@@ -1698,9 +1697,10 @@ function resolveShot(direct){
     later(200,()=>{if(g&&g.cur===u&&u.alive&&g.phase!=='over'){u.angle=clamp(u.angle+(Math.random()*4-2),0,90);fireShot(u.lastPower,true);}});return;}
   direct=direct||g.burstDirect;g.burstDirect=false;
   g.shotsLeft--;
-  if(g.mode==='normal'&&direct&&!g.extraUsed){g.extraUsed=true;g.shotsLeft=1;g.timer=TURN_T;banner('정타! 한 번 더 쏘세요');}
-  else if(g.shotsLeft>0){g.timer=TRIPLE_T;banner(`3연속 ${4-g.shotsLeft}번째 발! (5초)`);}
-  else{g.phase='between';later(500,nextTurn);return;}
+  if(g.mode==='triple'&&g.shotsLeft>0){   // 2연속: 같은 힘·각도로 두 번째 발 자동 발사
+    g.phase='flying';banner('2연속 두 번째 발!');
+    later(450,()=>{if(g&&g.cur===u&&u.alive&&g.phase!=='over'){g.fired=false;fireShot(u.lastPower);}});return;}
+  g.phase='between';later(500,nextTurn);return;
   g.lastSec=99;g.phase='aim';
   if(u.ai){g.phase='think';later(700,()=>aiTurn(u));}
 }
@@ -1726,7 +1726,7 @@ function useItem(k){
     g.target=en.reduce((a,b)=>Math.abs(b.x-u.x)<Math.abs(a.x-u.x)?b:a);sfx.pour();
     banner(!u.ai?'유도탄! ◀ ▶ 또는 화면을 눌러 대상을 고르고 [유도탄 발사]':'유도탄!');
   }else if(k==='triple'){
-    g.mode='triple';g.shotsLeft=3;sfx.pour();banner('3연속! 이번 턴 3번 던집니다');
+    g.mode='triple';g.shotsLeft=2;sfx.pour();banner('2연속! 쏘면 같은 힘·각도로 한 발 더 자동 발사');
   }else if(k==='heal'){
     const hc=CHARS[u.type].heal,amt=Math.round(u.maxHp*hc.pct),real=Math.min(amt,u.maxHp-u.hp);
     u.hp+=real;floatText(u.x,u.y-64,'+'+real,'#69F0AE');sfx.heal();
@@ -2179,9 +2179,8 @@ function drawHud(){
     // 상태 표시
     const tags=[];
     if(g.boost)tags.push('파워업 장전');
-    if(g.mode==='triple')tags.push(`3연속 남은 ${g.shotsLeft}발`);
+    if(g.mode==='triple')tags.push(`2연속 남은 ${g.shotsLeft}발`);
     if(g.mode==='penalty')tags.push('유도탄 조준');
-    if(g.extraUsed)tags.push('정타 보너스');
     if(tags.length){c.font=`bold 11px ${FONT}`;c.fillStyle='#FFD54F';c.fillText(tags.join(' · '),W/2,42);}
   }
   // 힘 막대, 이동량 (같이하기에서는 내 차례에만)
@@ -2217,7 +2216,7 @@ function portHud(){
   let t='',tags=[];
   if(u){t=(g.mp&&!u.ai&&u.ctrl===NET.myId?'🔔 내 차례! ':'')+`<span style="color:${u.color}">●</span> ${u.label} ${CHARS[u.type].name}`;
     if(!u.ai&&g.phase==='aim'&&!g.range)t+=`  ⏱ ${Math.max(0,Math.ceil(g.timer))}초`;else if(u.ai&&(g.phase==='think'||g.phase==='aim'))t+='  생각 중…';
-    if(g.boost)tags.push('파워업 장전');if(g.mode==='triple')tags.push(`3연속 남은 ${g.shotsLeft}발`);if(g.mode==='penalty')tags.push('유도탄: 화면이나 미니맵의 적을 누르세요');if(g.extraUsed)tags.push('정타 보너스');}
+    if(g.boost)tags.push('파워업 장전');if(g.mode==='triple')tags.push(`2연속 남은 ${g.shotsLeft}발`);if(g.mode==='penalty')tags.push('유도탄: 화면이나 미니맵의 적을 누르세요');}
   setTxt('pTurn',t);$('pTurn').classList.toggle('warn',!!u&&!u.ai&&g.phase==='aim'&&g.timer<=3);setTxt('pTag',tags.join(' · '));
   const show=u&&!u.ai&&!aimSecret(u);$('pPow').classList.toggle('off',!show);
   if(show){setTxt('pP',`힘 ${Math.round(g.charging?g.charge:u.lastPower)}`);setTxt('pA',`각도 ${Math.round(u.angle)}°`);setTxt('pMv',`이동 ${Math.max(0,Math.round(g.moveLeft/MOVE_BUDGET*100))}%`);
@@ -2265,7 +2264,7 @@ function updateBar(){
   if(!u)return;
   if(g.range){box.innerHTML='<div class="cpu">🎯 연습장 · 아이템 없음 · 시간 제한 없음</div>';return;}
   if(!human){box.innerHTML=`<div class="cpu">${g.phase==='over'?'':(u.ai?'컴퓨터':u.label)+' 차례'}</div>`;return;}
-  const list=[['bomb','파워업','위력 +30%'],['penalty','유도탄','반드시 명중'],['triple','3연속','3번 쏘기']];
+  const list=[['bomb','파워업','위력 +30%'],['penalty','유도탄','반드시 명중'],['triple','2연속','2발 자동']];
   const hc=CHARS[u.type].heal;if(hc)list.push(['heal',hc.name,'체력 +'+Math.round(hc.pct*100)+'%']);
   list.forEach(([k,n,d])=>{
     const b=document.createElement('button');
