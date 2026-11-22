@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v36 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v37 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -157,7 +157,6 @@ body.port .cpu{flex:1;text-align:center}
     <label class="tog"><input type="checkbox" id="optMusic"> 자연의 소리</label>
     <label class="tog"><input type="checkbox" id="optCam"> 포탄 따라가기·확대</label>
     <label class="tog"><input type="checkbox" id="optVib"> 정타 진동</label>
-    <label class="tog">자연재해 <select id="optHz"><option value="0">끔</option><option value="1">적게</option><option value="2">보통</option><option value="3">많이</option></select></label>
   </div>
 </div></div>
 
@@ -233,7 +232,6 @@ body.port .cpu{flex:1;text-align:center}
     <label class="tog"><input type="checkbox" id="optMusic2"> 자연의 소리</label>
     <label class="tog"><input type="checkbox" id="optCam2"> 포탄 따라가기·확대</label>
     <label class="tog"><input type="checkbox" id="optVib2"> 정타 진동</label>
-    <label class="tog">자연재해 <select id="optHz2"><option value="0">끔</option><option value="1">적게</option><option value="2">보통</option><option value="3">많이</option></select></label>
   </div>
   <div class="row">
     <button class="b pri" id="pResume">계속</button>
@@ -267,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v36</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v37</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -717,7 +715,7 @@ const store={
   get(k,d){try{const v=localStorage.getItem('abf_'+k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
   set(k,v){try{localStorage.setItem('abf_'+k,JSON.stringify(v));}catch(e){}}
 };
-const settings={shake:store.get('shake',true),sound:store.get('sound',true),real:store.get('real',true),music:store.get('music',true),cam:store.get('cam',true),vib:store.get('vib',true),hz:store.get('hz',2)};
+const settings={shake:store.get('shake',true),sound:store.get('sound',true),real:store.get('real',true),music:store.get('music',true),cam:store.get('cam',true),vib:store.get('vib',true),hz:2};   // 자연재해는 항상 켜짐(보통)
 
 // ---------- 소리 (Web Audio 합성) ----------
 const sfx=(()=>{
@@ -2349,7 +2347,6 @@ function saveMerged(){
   $('photoMsg').textContent='"Safari_War.html" 파일을 저장했습니다. 이 파일 하나만 휴대폰에 옮겨도 실사로 실행됩니다.';
 }
 function bindOpt(id,key){$(id).addEventListener('change',e=>{settings[key]=e.target.checked;store.set(key,settings[key]);});}
-['optHz','optHz2'].forEach(id=>{$(id).value=String(settings.hz);$(id).addEventListener('change',e=>{settings.hz=+e.target.value;store.set('hz',settings.hz);$('optHz').value=$('optHz2').value=String(settings.hz);});});
 bindOpt('optShake','shake');bindOpt('optSound','sound');bindOpt('optShake2','shake');bindOpt('optSound2','sound');bindOpt('optCam','cam');bindOpt('optCam2','cam');bindOpt('optVib','vib');bindOpt('optVib2','vib');
 ['optMusic','optMusic2'].forEach(id=>$(id).addEventListener('change',e=>{settings.music=e.target.checked;store.set('music',settings.music);$('optMusic').checked=$('optMusic2').checked=settings.music;if(settings.music)bgm.start();else bgm.stop();}));
 $('btnHelp').addEventListener('click',()=>{helpReturn='title';hideAll();show('help');});
