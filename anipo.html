@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v35 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v36 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -267,7 +267,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v35</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v36</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -439,9 +439,14 @@ function hzClouds(){if(HZC)return HZC;HZC={storm:[],small:[],wall:null};
 function hzRoll(){
   if(!g||g.range||g.remote||g.hz)return null;
   const lv=settings.hz==null?2:settings.hz;if(!HZ_P[lv])return null;
-  g.hzTurns=(g.hzTurns||0)+1;if(g.hzTurns<3)return null;           // 처음 두 차례는 쉼
-  if((g.hzCool||0)>0){g.hzCool--;return null;}                    // 한 번 일어나면 두 차례 쉼
-  if(Math.random()>=HZ_P[lv])return null;
+  g.hzTurns=(g.hzTurns||0)+1;
+  // 한 판에 기본 2번: 3~4번째 차례 전환에 1번, 그 뒤 3~4차례 뒤에 1번 (그 밖에는 설정한 확률로 추가)
+  if(!g.hzPlan){const a=3+(Math.random()*2|0);g.hzPlan=[a,a+3+(Math.random()*2|0)];g.hzDone=0;}
+  if(g.hzTurns<3)return null;                                     // 처음 두 차례는 쉼
+  if((g.hzCool||0)>0){g.hzCool--;return null;}                    // 한 번 일어나면 두 차례 쉼 (예정된 것은 다음으로 밀림)
+  const di=(g.hzDone||0)<2?g.hzPlan.findIndex(t=>t>0&&t<=g.hzTurns):-1;
+  if(di<0&&Math.random()>=HZ_P[lv])return null;
+  if(di>=0)g.hzPlan[di]=0;g.hzDone=(g.hzDone||0)+1;
   if(g.sea)return 'tsunami';
   const opts=[['bolt',40],['tornado',30],['quake',30]].filter(o=>o[0]!==g.hzLast);
   let s=opts.reduce((a,o)=>a+o[1],0)*Math.random();for(const o of opts){if((s-=o[1])<0)return o[0];}return opts[0][0];
