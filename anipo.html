@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v42 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v43 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -264,7 +264,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v42</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v43</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -1210,7 +1210,7 @@ function drawPlats(){if(!g.plats)return;const top=MAPS[g.mi].top;
 function genCanyon(seed){
   const r=mulberry32(seed+41),VOID=H+90;
   const side=()=>{const my=78+r()*22,l1=my+55+r()*22,l2=l1+42+r()*20;
-    return[{k:'mesa',w:72+r()*26,y:my},{k:'ledge',w:58+r()*14,y:l1},{k:'ledge',w:50+r()*12,y:l2,l2:1},{k:'gap',w:62+r()*24,g1:1},{k:'butte',w:44+r()*12,y:150+r()*40},{k:'gap',w:50+r()*20,g2:1}];};
+    return[{k:'mesa',w:72+r()*26,y:my},{k:'ledge',w:58+r()*14,y:l1},{k:'ledge',w:50+r()*12,y:l2,l2:1},{k:'gap',w:84+r()*22,g1:1},{k:'butte',w:44+r()*12,y:150+r()*40},{k:'gap',w:50+r()*20,g2:1}];};
   const L=side(),R=side().reverse(),C={k:'center',w:92+r()*22,y:118+r()*32},segs=L.concat([C],R);
   const tot=segs.reduce((a,s)=>a+s.w,0),sc=(W+1)/tot;
   const h=new Float32Array(W+1).fill(VOID),spots=[],plats=[];let x=0;
@@ -1220,9 +1220,13 @@ function genCanyon(seed){
   for(let i=1;i<W;i++){if(h[i]<VOID&&(h[i-1]>=VOID||h[i+1]>=VOID))h[i]+=2;}
   const mkSeg=(a,b)=>new Uint8Array(Math.max(1,Math.ceil((b-a)/SEGW))).fill(1);
   // 오버행: 아래 바위 턱 끝에서 낭떠러지 위로 튀어나옴
-  for(const [arr,dir] of [[L,1],[R,-1]]){const l2=arr.find(s=>s.l2),g1=arr.find(s=>s.g1),len=Math.round((g1.x1-g1.x0)*0.58);
+  for(const [arr,dir] of [[L,1],[R,-1]]){const l2=arr.find(s=>s.l2),g1=arr.find(s=>s.g1),len=Math.round((g1.x1-g1.x0)*0.44);
     const a=dir>0?l2.x1:l2.x0-len,b=dir>0?l2.x1+len:l2.x0;plats.push({k:'over',x0:a,x1:b,y0:l2.y,th:16,anchor:dir>0?'l':'r',seg:mkSeg(a,b)});
     spots.push({x:dir>0?b-len*0.45:a+len*0.45,w:len,k:'over',y:l2.y});}
+  // 절벽 중간 오버행: 기둥 바위 옆면 중간에서 튀어나옴 (위는 절벽, 아래는 낭떠러지)
+  for(const [arr,dir] of [[L,1],[R,-1]]){const bu=arr.find(s=>s.k==='butte'),g1=arr.find(s=>s.g1),len=Math.round((g1.x1-g1.x0)*0.4),y=Math.round(bu.y+55+r()*25);
+    const a=dir>0?bu.x0-len:bu.x1,b=dir>0?bu.x0:bu.x1+len;plats.push({k:'over',x0:a,x1:b,y0:y,th:15,anchor:dir>0?'r':'l',seg:mkSeg(a,b)});
+    spots.push({x:dir>0?a+len*0.42:b-len*0.42,w:len,k:'over',y});}
   // 흔들다리: 기둥 바위 ↔ 가운데 바위
   for(const arr of [L,R]){const bu=arr.find(s=>s.k==='butte'),g2=arr.find(s=>s.g2),a=g2.x0-3,b=g2.x1+3,left=a<W/2;
     const y0=left?bu.y:C.y,y1=left?C.y:bu.y;plats.push({k:'bridge',x0:a,x1:b,y0,y1,sag:9,th:5,anchor:'both',seg:mkSeg(a,b)});}
@@ -1296,7 +1300,7 @@ function groundAt(x){
   let m=1e9;const P=g.ph;for(let i=Math.round(x-4);i<=Math.round(x+4);i++){const ix=clamp(i,0,W);if(g.h[ix]<m)m=g.h[ix];if(P&&P[ix]<m)m=P[ix];}
   return m;
 }
-function tiltOf(u){const a=groundAt(u.x-9),b=groundAt(u.x+9);return clamp(Math.atan2(b-a,18),-0.6,0.6);}
+function tiltOf(u){const c0=groundAt(u.x);let a=groundAt(u.x-9),b=groundAt(u.x+9);if(Math.abs(a-c0)>12)a=c0;if(Math.abs(b-c0)>12)b=c0;return clamp(Math.atan2(b-a,18),-0.6,0.6);}
 // 실제로 날아가는 각도 = 내가 맞춘 각도 + 몸이 기운 만큼 (오르막을 보면 더 높게, 내리막을 보면 더 낮게)
 function effAngle(u){return u.angle-(u.tilt||0)*u.facing*180/Math.PI;}
 function banner(t){netEv(['n',t]);if(g)g.banner={text:t,life:2.2};}
