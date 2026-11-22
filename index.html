@@ -141,7 +141,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v47 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v48 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -265,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v47</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v48</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -2576,7 +2576,7 @@ function doFireDown(ctrl){
   if(g.mode==='penalty'){if(!g.fired)launchPenalty();return;}
   g.charging=true;g.charge=0;
 }
-function guestLocalShot(pw,go){const u=g.cur;if(!u)return;if(!go&&THR[u.type]){u._thr={t:0};const at=THR[u.type].at;setTimeout(()=>{if(g&&g.cur===u)guestLocalShot(pw,true);},at*1000);return;}if(CHARS[u.type].runner){u.throwT=0.3;sfx.cry(u.type);NET.cryAt=performance.now();return;}if(CHARS[u.type].bomber&&false){u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();return;}const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,v=clamp(pw,5,100)*(inWater(u)?0.85:1)/100*VMAX*c.spd,hp=handPos(u);
+function guestLocalShot(pw){const u=g.cur;if(!u)return;if(THR[u.type]){u._thr={t:0};sfx.cry(u.type);NET.cryAt=performance.now();return;}   // 던지기 동작이 있는 동물: 동작만 먼저 보이고 포탄은 방장 것 하나만if(CHARS[u.type].runner){u.throwT=0.3;sfx.cry(u.type);NET.cryAt=performance.now();return;}if(CHARS[u.type].bomber&&false){u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();return;}const c=CHARS[u.type],a=effAngle(u)*Math.PI/180,v=clamp(pw,5,100)*(inWater(u)?0.85:1)/100*VMAX*c.spd,hp=handPos(u);
   g.proj={x:hp.x,y:hp.y,trail:[],type:u.type,spin:0,boost:g.boost,_local:true,_lt:performance.now(),_lvx:Math.cos(a)*u.facing*v,_lvy:-Math.sin(a)*v,carrier:!!c.carry,facing:u.facing};
   u.throwT=0.3;sfx.throw();sfx.cry(u.type);NET.cryAt=performance.now();}
 function fireUp(){const was=fireHeld;fireHeld=false;if(NET.role==='guest'){if(NET.lc&&g){guestSync();const pw=Math.round(g.charge*10)/10;netSend(NET.dc,{t:'fu',p:pw,a:g.cur?Math.round(g.cur.angle*10)/10:null});NET.lc=false;NET.lcHold=performance.now();g.charging=false;guestLocalShot(pw);}else if(was)netSend(NET.dc,{t:'fu'});return;}if(was)doFireUp(NET.myId);}
@@ -3352,7 +3352,7 @@ function applySnap(s){
     else if(e[0]==='k'){g.claw={x:e[1],y:e[2],f:e[3],t:0,hit:!!e[4]};g.flashC=null;if(e[4])buzz('tiger');g.slowT=e[4]?0.45:0.2;g.flashW=e[4]?0.22:0.1;g.shakeT=Math.max(g.shakeT||0,e[4]?0.35:0.15);if(settings.cam!==false)g.camHit={x:e[1],y:e[2]+10,t:1.0};try{sfx.cry('tiger');sfx.boomS(e[4]?2:1);}catch(err){}}
     else if(e[0]==='t')floatText(e[1],e[2],e[3],e[4]);
     else if(e[0]==='c')carve(e[1],e[2],e[3]);
-    else if(e[0]==='w'){const wu=g.units[e[1]];if(wu&&!(wu._thr&&wu._thr.t<0.3))wu._thr={t:0};}
+    else if(e[0]==='w'){const wu=g.units[e[1]];if(wu&&!wu._thr)wu._thr={t:0};}
     else if(e[0]==='h'){if(g.hz)g.hz=null;hzStart(e[1],e[2],e[3],e[4],null);}
     else if(e[0]==='n')banner(e[1]);
     else if(e[0]==='s'&&sfx[e[1]]){if(e[1]==='cry'&&performance.now()-(NET.cryAt||0)<2500)continue;sfx[e[1]](e[2]);}
