@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v37 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v38 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -265,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v37</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v38</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -321,7 +321,7 @@ const CHARS={
   eagle:{name:'독수리',job:'돌 투하',emoji:'🦅',hp:90,grade:2,dmg:22,rad:20,spd:1.12,wind:0.3,carry:true,size:48,fx:'돌을 들고 포탄처럼 날아가 가장 높은 곳에서 떨굼 · 바람 영향 적음'},
   elephant:{name:'코끼리',job:'대형 폭탄',emoji:'🐘',hp:70,grade:3,dmg:34,rad:38,spd:0.9,wind:1,size:62,fx:'파워 상 · 폭발 반경 최대'},
   hedgehog:{name:'고슴도치',job:'가시 18발',emoji:'🦔',hp:90,grade:2,dmg:3,rad:9,spd:1,wind:1,volley:18,size:40,fx:'등에서 가시 18발을 부채꼴로 발사 · 발당 피해 작음'},
-  mole:{name:'두더지',job:'굴착탄',emoji:'🐹',hp:90,grade:2,dmg:24,rad:26,spd:1,wind:1,dig:true,size:36,fx:'파워 중 · 땅을 깊게 팜'},
+  mole:{name:'두더지',job:'굴착탄',emoji:'🐹',hp:90,grade:2,dmg:21.6,rad:26,spd:1,wind:1,dig:true,size:36,fx:'파워 중 · 땅을 깊게 팜'},
   turtle:{name:'거북이',job:'중포탄',emoji:'🐢',hp:70,grade:3,dmg:30,rad:28,spd:0.95,wind:1,armor:0.8,size:44,fx:'파워 상 · 받는 피해 -20%'},
   bat:{name:'박쥐',job:'흡혈탄 투하',emoji:'🦇',hp:110,grade:1,dmg:16,rad:22,spd:1.05,wind:1,leech:0.05,carry:true,size:41,fx:'흡혈탄을 들고 포탄처럼 날아가 가장 높은 곳에서 떨굼 · 준 피해 5% 회복'},
   snake:{name:'뱀',job:'독 장판탄',emoji:'🐍',hp:110,grade:1,dmg:16,rad:22,spd:1,wind:1,puddle:true,puddleColor:'rgba(110,190,40,.6)',size:44,fx:'파워 하 · 독 장판'},
@@ -446,7 +446,7 @@ function hzRoll(){
   if(di<0&&Math.random()>=HZ_P[lv])return null;
   if(di>=0)g.hzPlan[di]=0;g.hzDone=(g.hzDone||0)+1;
   if(g.sea)return 'tsunami';
-  const opts=[['bolt',40],['tornado',30],['quake',30]].filter(o=>o[0]!==g.hzLast);
+  const opts=[['bolt',30],['tornado',25],['quake',25],['volcano',20]].filter(o=>o[0]!==g.hzLast);
   let s=opts.reduce((a,o)=>a+o[1],0)*Math.random();for(const o of opts){if((s-=o[1])<0)return o[0];}return opts[0][0];
 }
 function hzBegin(type,cb){
@@ -454,15 +454,17 @@ function hzBegin(type,cb){
   if(type==='bolt'){const al=g.units.filter(u=>u.alive),tr=g.deco?g.deco.trees.filter(t=>t.alive):[],q=Math.random();   // 동물 35% · 나무/바위 40% · 아무 곳 25%
     if(al.length&&q<0.35)x=al[Math.random()*al.length|0].x+hzR(-4,4);else if(tr.length&&q<0.75)x=tr[Math.random()*tr.length|0].x+hzR(-6,6);}
   if(type==='tornado')x=hzR(90,W-90);
+  if(type==='volcano'){let k=0;do{x=hzR(90,W-90);k++;}while(k<60&&g.units.some(u=>u.alive&&Math.abs(u.x-x)<60));}
   x=Math.round(clamp(x,20,W-20));
   g.hzLast=type;g.hzCool=2;
   netEv(['h',type,x,dir,pow]);hzStart(type,x,dir,pow,cb);
-  banner({bolt:'⚡ 낙뢰 주의! 표시된 곳을 보세요',tornado:'🌪 먹구름이 모입니다… 회오리 징조',quake:'⚠ 땅이 흔들립니다… 지진!',tsunami:'🌊 해저지진! 곧 해일이 밀려옵니다'}[type]);
+  banner({bolt:'⚡ 낙뢰 주의! 표시된 곳을 보세요',tornado:'🌪 먹구름이 모입니다… 회오리 징조',volcano:'🌋 땅이 부풀어 오릅니다… 화산 징조',quake:'⚠ 땅이 흔들립니다… 지진!',tsunami:'🌊 해저지진! 곧 해일이 밀려옵니다'}[type]);
 }
 function hzStart(type,x,dir,pow,cb){
   const e={type,x,x0:x,dir,pow,t:0,cb,deb:[],spd:55+((x*13)%20),wob:(x%7)};
   if(type==='tornado'){e.cl=[];for(let i=0;i<22;i++)e.cl.push({a:hzR(0,6.28),r:hzR(160,420),s:hzR(30,60),sp:hzR(.3,.7)});hzClouds();}
-  if(type==='bolt'||type==='quake')hzClouds();
+  if(type==='bolt'||type==='quake'||type==='volcano')hzClouds();
+  if(type==='volcano'){e.ph='warn';e.base=groundAt(x);}
   g.hz=e;g.hzDark=g.hzDark||0;
   try{type==='tornado'?sfx.hzWind(3):sfx.hzRumble(1.2,0.25);}catch(err){}
 }
@@ -493,7 +495,7 @@ function hzUpdate(dt){
   const e=g.hz;
   if(!e){if(g.hzDark>0)g.hzDark=Math.max(0,g.hzDark-dt*0.6);return;}
   e.t+=dt;
-  const dk=e.type==='tsunami'?0:e.type==='quake'?0.35:(e.type==='tornado'&&hzPhase(e)==='lift')?0:0.75;
+  const dk=e.type==='tsunami'?0:e.type==='quake'?0.35:e.type==='volcano'?(e.ph==='warn'?0.2:0.6):(e.type==='tornado'&&hzPhase(e)==='lift')?0:0.75;
   g.hzDark=(g.hzDark||0)+(dk-(g.hzDark||0))*Math.min(1,dt*1.2);
   if(e.type==='bolt'){
     if(!e.struck&&e.t>=1.2){e.struck=true;const gy=groundAt(e.x);e.bolt=hzBolt(e.x,gy);e.bt=0;g.flashW=0.28;g.flashC='235,240,255';g.shakeT=0.45;hzBuzz([60,40,140]);try{sfx.hzThunder();}catch(err){}
@@ -523,6 +525,7 @@ function hzUpdate(dt){
       if(c.cT>1.8||ph!=='active'){u.hz={st:'air',vx:(Math.random()<.5?1:-1)*hzR(60,200),vy:-hzR(30,160)};u._hzT=true;}}
     if(ph==='end'&&!g.units.some(u=>u.hz))hzEnd();
   }
+  else if(e.type==='volcano')hzVUpdate(e,dt,host);
   else if(e.type==='quake'||e.type==='tsunami'){
     const sea=e.type==='tsunami';
     if(!e.ph)e.ph='warn';
@@ -551,6 +554,62 @@ function hzUpdate(dt){
     if(z.st==='swim'){u.y=Math.max(SEA_Y+30,u.y);if(Math.abs(z.vx)>8)u.facing=z.vx>0?1:-1;}
     const gy=groundAt(u.x);if(u.y>=gy&&z.vy>0){u.y=gy;if(z.st==='air'&&z.vy>260){const d=Math.round((z.vy-260)/25)+3;damage(u,d);g.shakeT=Math.max(g.shakeT||0,0.15);}u.hz=null;u.vy=0;}}
 }
+// ----- 화산: 징조 2초(땅이 부풀고 연기) → 분화(언덕이 솟고 불기둥) → 화산탄 3.5초 → 용암 장판 -----
+function hzVBulge(e,k){for(let i=-40;i<=40;i++){const xx=Math.round(e.x+i);if(xx<0||xx>W)continue;const top=e.base-14*k*Math.pow(1-Math.abs(i)/40,1.5);if(top<g.h[xx])g.h[xx]=top;}}
+function hzVCone(e){const Wd=80;for(let i=-Wd;i<=Wd;i++){const xx=Math.round(e.x+i);if(xx<0||xx>W)continue;const f=Math.pow(Math.max(0,1-Math.abs(i)/Wd),1.25);let top=e.base-58*f;if(Math.abs(i)<9)top+=7*(1-Math.abs(i)/9);if(top<g.h[xx])g.h[xx]=top;}
+  (g.hzCones=g.hzCones||[]).push(e.x);}
+function hzVErupt(e,host){
+  e.ph='erupt';e.et=e.t;hzVBulge(e,1);hzVCone(e);
+  g.shakeT=0.9;g.flashW=0.3;g.flashC='255,140,60';hzBuzz([250,80,250]);try{sfx.hzRumble(2.4,0.8);sfx.boomS(3);}catch(err){}
+  if(g.deco){for(const t of g.deco.trees){if(!t.alive||Math.abs(t.x-e.x)>(t.rock?80:95))continue;t.alive=false;const ty=g.h[clamp(Math.round(t.x),0,W)];
+      for(let i=0;i<14;i++){const a=-Math.PI*Math.random(),sp=40+Math.random()*130;g.parts.push({kind:t.rock?'drop':'ember',x:t.x+(Math.random()-0.5)*20,y:ty-25*t.s,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp*(t.rock?1:0.4),life:0.7+Math.random()*0.8,max:1,color:t.rock?(i%2?'#5a4a44':'#3c302b'):(i%3?'#ff7043':'#ffca28'),size:1.5+Math.random()*2.2});}}
+    setTimeout(()=>{if(g&&g.deco)for(const l of g.deco.lakes)if(!l.ice&&e.x+90>l.tr[0]-30&&e.x-90<l.tr[1]+30)relevel(l);},0);}
+  const top=groundAt(e.x)-2;for(let i=0;i<60;i++)g.parts.push({kind:'ember',x:e.x+(Math.random()-0.5)*16,y:top,vx:(Math.random()-0.5)*120,vy:-200-Math.random()*220,life:0.6+Math.random()*0.8,max:1,color:i%3?'#ff7043':'#ffd54f',size:1.5+Math.random()*2});
+  if(host)for(const u of g.units){if(!u.alive)continue;const d=Math.abs(u.x-e.x);if(d<80){damage(u,8);if(u.alive)u.hz={st:'air',vx:(u.x>=e.x?1:-1)*hzR(70,120),vy:-hzR(140,200)};}}
+  // 화산탄: 방장·참가자가 같은 값으로 날림(땅 파기·피해는 방장만)
+  const r=mulberry32(Math.round(e.x*13+7));e.bombs=[];e.bq=[];let t=0;for(let i=0;i<8;i++){t+=0.25+r()*0.3;const dir=r()<.5?-1:1;e.bq.push({at:t,vx:dir*(60+r()*200),vy:-(260+r()*140),r:4+r()*3});}
+}
+function hzVUpdate(e,dt,host){
+  if(e.ph==='warn'){const k=Math.min(1,e.t/2);hzVBulge(e,k);g.shakeT=Math.max(g.shakeT||0,0.03+k*0.08);
+    if(Math.random()<0.25+k*0.4)g.parts.push({kind:'smoke',x:e.x+(Math.random()-0.5)*30,y:groundAt(e.x)-4,vx:(Math.random()-0.5)*12,vy:-15-Math.random()*20,life:2+Math.random()*1.5,max:1,size:5+Math.random()*4,color:'#555'});
+    if(e.t>=2)hzVErupt(e,host);return;}
+  const et=e.t-e.et,top=groundAt(e.x)-2;
+  while(e.bq.length&&e.bq[0].at<=et){const q=e.bq.shift();e.bombs.push({x:e.x,y:top,vx:q.vx,vy:q.vy,r:q.r,rot:0,tr:[]});try{sfx.throw();}catch(err){}}
+  if(et<3.5&&Math.random()<0.9)g.parts.push({kind:'ember',x:e.x+(Math.random()-0.5)*12,y:top,vx:(Math.random()-0.5)*80,vy:-150-Math.random()*150,life:0.5+Math.random()*0.5,max:1,color:Math.random()<.5?'#ff7043':'#ffca28',size:1.5+Math.random()*1.5});
+  if(Math.random()<0.7)g.parts.push({kind:'smoke',x:e.x+(Math.random()-0.5)*20,y:top-6,vx:(Math.random()-0.5)*24+8,vy:-40-Math.random()*40,life:3+Math.random()*2,max:1,size:8+Math.random()*6,color:'#333'});
+  if(et>0.4){e.lavaL=Math.min(110,(e.lavaL||0)+dt*45);e.lavaR=Math.min(110,(e.lavaR||0)+dt*45);}
+  for(const b of e.bombs){b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.rot+=dt*6;b.tr.push([b.x,b.y]);if(b.tr.length>12)b.tr.shift();
+    let hitU=null;if(host)for(const u of g.units)if(u.alive&&!u.hz&&Math.abs(u.x-b.x)<12&&b.y>u.y-uH(u)&&b.y<u.y)hitU=u;
+    if(b.x<0||b.x>W){b.dead=1;continue;}
+    if(hitU||b.y>=groundAt(b.x)){b.dead=1;const gy=groundAt(b.x);
+      for(let i=0;i<14;i++)g.parts.push({kind:i%2?'ember':'drop',x:b.x,y:Math.min(b.y,gy)-2,vx:(Math.random()-0.5)*220,vy:-40-Math.random()*160,life:0.5+Math.random()*0.5,max:1,color:i%2?'#ff7043':'#4a3a33',size:1.2+Math.random()*1.8});
+      g.shakeT=Math.max(g.shakeT||0,0.15);try{sfx.boomS(1);}catch(err){}
+      if(host){carve(b.x,gy-2,10);for(const u of g.units){if(!u.alive)continue;const d=Math.abs(u.x-b.x);if(u===hitU||d<14)damage(u,10);else if(d<30)damage(u,4);}}}}
+  e.bombs=e.bombs.filter(b=>!b.dead);
+  if(et>5.5&&!e.bombs.length&&!e.bq.length){
+    if(host&&!e.lavaDone){e.lavaDone=1;const x0=Math.max(0,e.x-e.lavaL),x1=Math.min(W,e.x+e.lavaR);g.puddles.push({x:(x0+x1)/2,w:x1-x0,color:'lava',turns:2*g.units.filter(u=>u.alive).length});banner('🔥 용암이 남았습니다 – 그 위에서 차례를 시작하면 피해');}
+    if(!(host&&g.units.some(u=>u.hz)))hzEnd();}
+}
+function hzDrawLava(x0,x1,cx,now){
+  const a=Math.max(0,Math.round(x0)),b=Math.min(W,Math.round(x1));if(b<=a)return;ctx.save();ctx.beginPath();
+  for(let x=a;x<=b;x+=2){const th=4+4*Math.max(0,1-Math.abs(x-cx)/((x1-x0)/2+1));const y=g.h[x]-th*0.5;x===a?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  for(let x=b;x>=a;x-=2)ctx.lineTo(x,g.h[x]+4);ctx.closePath();
+  const gr=ctx.createLinearGradient(0,120,0,H);gr.addColorStop(0,'#ffcf40');gr.addColorStop(.4,'#ff6a1a');gr.addColorStop(1,'#a8200c');ctx.fillStyle=gr;ctx.shadowColor='#ff5722';ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;
+  ctx.strokeStyle='rgba(60,20,10,.6)';ctx.lineWidth=1.2;for(let x=a+6;x<b-4;x+=17){const y=g.h[x];ctx.beginPath();ctx.moveTo(x,y-1);ctx.lineTo(x+5+Math.sin(now+x)*2,y+2);ctx.stroke();}
+  ctx.restore();}
+function hzDrawCones(){if(!g.hzCones)return;for(const cx of g.hzCones){ctx.beginPath();let st=false;
+  for(let i=-80;i<=80;i+=2){const xx=Math.round(cx+i);if(xx<0||xx>W)continue;st?ctx.lineTo(xx,g.h[xx]):ctx.moveTo(xx,g.h[xx]);st=true;}
+  for(let i=80;i>=-80;i-=2){const xx=Math.round(cx+i);if(xx<0||xx>W)continue;ctx.lineTo(xx,g.h[xx]+14*(1-Math.abs(i)/80));}ctx.closePath();ctx.fillStyle='rgba(50,40,36,.9)';ctx.fill();}}
+function hzDrawVolcano(e,now){
+  if(e.ph==='warn'){const y=groundAt(e.x),k=(e.t*1.5)%1;ctx.strokeStyle=`rgba(255,140,60,${1-k})`;ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(e.x,y,12+k*50,3+k*10,0,0,7);ctx.stroke();
+    ctx.lineWidth=3;ctx.strokeStyle='rgba(0,0,0,.6)';ctx.fillStyle='#ffab40';ctx.strokeText('⚠ 화산 징조',e.x,y-40);ctx.fillText('⚠ 화산 징조',e.x,y-40);return;}
+  const top=groundAt(e.x)-2,et=e.t-e.et,a=Math.max(0,1-et/4.5);
+  if(e.lavaL)hzDrawLava(e.x-e.lavaL,e.x+e.lavaR,e.x,now);
+  if(a>0){const gr=ctx.createLinearGradient(0,top-160,0,top);gr.addColorStop(0,'rgba(255,120,40,0)');gr.addColorStop(.5,`rgba(255,140,40,${.55*a})`);gr.addColorStop(1,`rgba(255,230,120,${.95*a})`);
+    ctx.fillStyle=gr;ctx.beginPath();ctx.moveTo(e.x-8,top);ctx.quadraticCurveTo(e.x-22+Math.sin(now*20)*4,top-80,e.x-14,top-160);ctx.lineTo(e.x+14,top-160);ctx.quadraticCurveTo(e.x+22+Math.sin(now*17)*4,top-80,e.x+8,top);ctx.fill();}
+  for(const b of e.bombs||[]){b.tr.forEach(([x,y],i)=>{ctx.globalAlpha=i/b.tr.length*0.6;ctx.fillStyle=i%2?'#ff7043':'#ffca28';ctx.beginPath();ctx.arc(x,y,b.r*0.6*i/b.tr.length+1,0,7);ctx.fill();});ctx.globalAlpha=1;
+    ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.rot);ctx.shadowColor='#ff5722';ctx.shadowBlur=10;ctx.fillStyle='#3b2a24';ctx.beginPath();ctx.moveTo(-b.r,-b.r*0.4);ctx.lineTo(-b.r*0.2,-b.r);ctx.lineTo(b.r,-b.r*0.3);ctx.lineTo(b.r*0.7,b.r*0.8);ctx.lineTo(-b.r*0.6,b.r*0.7);ctx.closePath();ctx.fill();ctx.restore();}
+}
 function hzBolt(x,y){const pts=[[x+hzR(-80,80),-60]];let cx=pts[0][0],cy=-60;const br=[];
   while(cy<y){cy+=hzR(14,26);cx+=(x-cx)*0.25+hzR(-16,16);pts.push([cx,Math.min(cy,y)]);
     if(Math.random()<0.25&&cy<y-40){const b=[[cx,cy]];let bx=cx,by=cy;for(let i=0;i<4;i++){bx+=hzR(-25,25);by+=hzR(10,22);b.push([bx,by]);}br.push(b);}}
@@ -568,6 +627,7 @@ function hzDrawFront(){
   if((e.type==='quake'||e.type==='tsunami')&&e.ph==='warn'){const y=groundAt(e.x),k=(e.t*2)%1;ctx.strokeStyle=`rgba(255,213,79,${1-k})`;ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(e.x,y,10+k*50,3+k*10,0,0,7);ctx.stroke();
     ctx.lineWidth=3;ctx.strokeStyle='rgba(0,0,0,.6)';ctx.fillStyle='#ffe082';ctx.strokeText('⚠ 진원',e.x,y-28);ctx.fillText('⚠ 진원',e.x,y-28);}
   if(e.type==='tornado')hzDrawTornado(e,now);
+  if(e.type==='volcano')hzDrawVolcano(e,now);
   if(e.type==='bolt'&&e.bolt&&e.bt<0.35){const a=1-e.bt/0.35,b=e.bolt;const line=(pts,w)=>{ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.lineWidth=w;ctx.stroke();};
     ctx.save();ctx.shadowColor='#bbdefb';ctx.shadowBlur=18;ctx.strokeStyle=`rgba(200,225,255,${a})`;line(b.pts,7);b.br.forEach(p=>line(p,3));ctx.strokeStyle=`rgba(255,255,255,${a})`;line(b.pts,2.5);b.br.forEach(p=>line(p,1.2));ctx.restore();}
 }
@@ -1347,7 +1407,7 @@ function startTurn(u){
   g.moveLeft=MOVE_BUDGET;g.charging=false;g.charge=0;g.target=null;g.lastSec=99;
   g.phase='aim';
   const pd=g.puddles.find(p=>Math.abs(u.x-p.x)<=p.w/2);
-  if(pd){damage(u,5);floatText(u.x,u.y-78,'독 장판','#b9f6ca');
+  if(pd){damage(u,5);floatText(u.x,u.y-78,pd.color==='lava'?'🔥 용암':'독 장판',pd.color==='lava'?'#ffab40':'#b9f6ca');
     if(!u.alive){g.phase='between';later(900,nextTurn);return;}}
   if(!g.range)banner(`${u.label} ${CHARS[u.type].name}(${CHARS[u.type].job}) 차례`);
   if(g.mp&&NET.role==='host')NET.lastSnap=0;
@@ -1841,7 +1901,7 @@ function update(dt){
     if(v.throwT>0)v.throwT-=dt;if(v.hurtT>0)v.hurtT-=dt;
   }
   }
-  for(const p of g.parts){p.vy+=(p.kind==='plus'||p.kind==='ember'||p.kind==='streak'?0:p.kind==='mud'?20:G*0.9)*dt;if(p.kind==='mud'){p.vx*=Math.pow(0.4,dt);p.vy*=Math.pow(0.5,dt);p.size+=dt*4;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.rot!=null)p.rot+=p.vr*dt;}
+  for(const p of g.parts){p.vy+=(p.kind==='plus'||p.kind==='ember'||p.kind==='streak'||p.kind==='smoke'?0:p.kind==='mud'?20:G*0.9)*dt;if(p.kind==='mud'){p.vx*=Math.pow(0.4,dt);p.vy*=Math.pow(0.5,dt);p.size+=dt*4;}if(p.kind==='smoke'){p.vy*=Math.pow(0.7,dt);p.size+=dt*9;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.rot!=null)p.rot+=p.vr*dt;}
   g.parts=g.parts.filter(p=>p.life>0&&p.y<H+20);
   for(const t of g.texts){t.y-=22*dt;t.life-=dt;}g.texts=g.texts.filter(t=>t.life>0);
   for(const f of g.flashes)f.life-=dt;g.flashes=g.flashes.filter(f=>f.life>0);
@@ -1944,9 +2004,10 @@ function render(){
   ctx.drawImage(terrainArt,0,0,W,H+70);ctx.restore();
   ctx.strokeStyle=MAPS[g.mi].top;ctx.lineWidth=4;ctx.lineJoin='round';ctx.beginPath();
   for(let x=0;x<=W;x+=2){if(x===0)ctx.moveTo(x,g.h[x]+1);else ctx.lineTo(x,g.h[x]+1);}ctx.stroke();
-  hzDrawCracks();
+  hzDrawCones();hzDrawCracks();
   // 독 장판
   for(const p of g.puddles){
+    if(p.color==='lava'){hzDrawLava(p.x-p.w/2,p.x+p.w/2,p.x,performance.now()/1000);continue;}
     ctx.fillStyle=p.color||'rgba(110,190,40,.6)';ctx.beginPath();
     const x0=Math.max(0,Math.round(p.x-p.w/2)),x1=Math.min(W,Math.round(p.x+p.w/2));
     ctx.moveTo(x0,g.h[x0]+1);for(let x=x0;x<=x1;x+=2)ctx.lineTo(x,g.h[x]-3);
@@ -2011,6 +2072,7 @@ function render(){
     ctx.globalAlpha=Math.min(1,q.life*2);ctx.fillStyle=q.color;
     if(q.kind==='shard'){ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.rot);ctx.fillRect(-q.size,-0.6,q.size*2,1.2);ctx.restore();}
     else if(q.kind==='plus'){ctx.fillRect(q.x-3,q.y-1,6,2);ctx.fillRect(q.x-1,q.y-3,2,6);}
+    else if(q.kind==='smoke'&&HZC){const im=HZC.small[(q.size*7|0)%HZC.small.length],sc=q.size/22;ctx.globalAlpha=Math.min(0.75,q.life*0.35);ctx.drawImage(im,q.x-im.width*sc/2,q.y-im.height*sc/2,im.width*sc,im.height*sc);}
     else if(q.kind==='mud'){const gr=ctx.createRadialGradient(q.x,q.y,0,q.x,q.y,q.size*1.6);gr.addColorStop(0,q.color);gr.addColorStop(1,'rgba(125,100,65,0)');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(q.x,q.y,q.size*1.6,0,7);ctx.fill();}
     else if(q.kind==='streak'){ctx.strokeStyle=q.color;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(q.x-q.vx*0.08,q.y);ctx.stroke();}
     else{ctx.beginPath();ctx.arc(q.x,q.y,q.size,0,7);ctx.fill();}
