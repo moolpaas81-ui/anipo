@@ -141,7 +141,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v51 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.23 v52 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -282,7 +282,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v51</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.23 v52</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -338,7 +338,7 @@ const FONT='"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif';
 const CHARS={
   eagle:{name:'독수리',job:'돌 투하',emoji:'🦅',hp:90,grade:2,dmg:22,rad:20,spd:1.12,wind:0.3,carry:true,size:48,fx:'돌을 들고 포탄처럼 날아가 가장 높은 곳에서 떨굼 · 바람 영향 적음'},
   elephant:{name:'코끼리',job:'대형 폭탄',emoji:'🐘',hp:70,grade:3,dmg:34,rad:38,spd:0.9,wind:1,size:62,fx:'파워 상 · 폭발 반경 최대'},
-  hedgehog:{name:'고슴도치',job:'가시 18발',emoji:'🦔',hp:90,grade:2,dmg:3,rad:9,spd:1,wind:1,volley:18,size:40,fx:'등에서 가시 18발을 부채꼴로 발사 · 발당 피해 작음'},
+  hedgehog:{name:'고슴도치',job:'가시 18발',emoji:'🦔',hp:90,grade:2,dmg:2.2,rad:9,spd:1,wind:1,volley:18,vcap:24,size:40,fx:'등에서 가시 18발을 부채꼴로 발사 · 발당 피해 작음 · 한 대상에 최대 24'},
   mole:{name:'두더지',job:'굴착탄',emoji:'🐹',hp:90,grade:2,dmg:21.6,rad:26,spd:1,wind:1,dig:true,size:36,fx:'파워 중 · 땅을 깊게 팜'},
   turtle:{name:'거북이',job:'중포탄',emoji:'🐢',hp:70,grade:3,dmg:30,rad:28,spd:0.95,wind:1,armor:0.8,size:44,fx:'파워 상 · 받는 피해 -20%'},
   bat:{name:'박쥐',job:'흡혈탄 투하',emoji:'🦇',hp:110,grade:1,dmg:16,rad:22,spd:1.05,wind:1,leech:0.05,carry:true,size:41,fx:'흡혈탄을 들고 포탄처럼 날아가 가장 높은 곳에서 떨굼 · 준 피해 5% 회복'},
@@ -2304,6 +2304,7 @@ function blast(p,hitUnit){
   if(c.volley){   // 가시 한 발: 작은 구멍, 작은 피해(합계는 턴 끝에 표시), 작은 튐
     carve(ex,ey,rad*0.6);
     for(const u of g.units){if(!u.alive)continue;let d=0;if(u===hitUnit)d=dmg;else{const dist=Math.hypot(u.x-ex,(u.y-uH(u)/2)-ey);if(dist<=rad)d=dmg*(1-0.5*dist/rad);}
+      if(d>0){const cap=c.vcap*mul*(p.dm||1)*(o.dmgMul||1)/((!CHARS[u.type].armor)?1:CHARS[u.type].armor);d=Math.min(d,cap-(u._vd||0)/(CHARS[u.type].armor||1));}   // 한 번 쏜 가시 묶음의 합계 상한
       if(d>0){const a0=damage(u,d,false,true);u._vd=(u._vd||0)+a0;if(u.team!==p.owner.team&&a0>0){u._vn=(u._vn||0)+1;u._vo=p.owner;}}}
     for(let i=0;i<4;i++){const a=-Math.PI*Math.random();g.parts.push({kind:'shard',x:ex,y:ey,vx:Math.cos(a)*90,vy:Math.sin(a)*90,life:0.35,max:1,color:'#6D4C41',size:2.5,rot:a,vr:0});}
     if(!g._xb)boom(ex,ey,10,p.type,1,false);
