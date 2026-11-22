@@ -141,7 +141,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v49 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v50 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -210,7 +210,7 @@ body.port .cpu{flex:1;text-align:center}
   <h3>바닷속 맵</h3>
   · 물속에서는 포탄이 느려지고 덜 떨어집니다(물 저항·부력). 바람은 물 밖에서만 붑니다.<br>
   · 물 밖으로는 어떤 각도로든 그대로 나갑니다(수면 반사 없음).<br>
-  · 수면 위에서 다시 물로 들어갈 때는 굴절로 방향이 아래쪽으로 1~2°만 살짝 꺾입니다. 수면 위로 넘겨 맞혀 보세요.
+  · 수면 위에서 다시 물로 들어갈 때는 굴절로 방향이 아래쪽으로 1~2° 꺾이고, 물에 부딪혀 속도가 22% 줄어듭니다(물개·흰동가리는 5%). 수면 위로 넘겨 맞혀 보세요.
   <h3>연습장</h3>
   · 처음 화면 [🎯 연습모드]: 시간 제한 없이 과녁을 맞히며 각도·힘·거리감을 익힙니다.<br>
   · 바닥에 5m마다 눈금, 과녁까지 거리, 쏠 때마다 각도·힘·착탄 거리 기록이 나옵니다. [예상 궤적]을 켜면 날아갈 길이 미리 보입니다.<br>
@@ -265,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v49</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v50</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -1174,10 +1174,10 @@ function physStep(o,c,dt,fx,wind){   // 포탄 한 걸음: 공기 중에는 바�
   if(was){const k=c.swim?0.12:0.55,f=Math.max(0,1-k*dt);o.vx*=f;o.vy*=f;o.vy+=G*(c.swim?0.25:0.35)*dt;}
   else{o.vx+=w*c.wind*dt;o.vy+=G*dt;}
   o.x+=o.vx*dt;o.y+=o.vy*dt;
-  if(sea){const now=o.y>sea.y;if(now!==was)seaCross(o,now,fx);}
+  if(sea){const now=o.y>sea.y;if(now!==was)seaCross(o,now,fx,c);}
 }
-function seaCross(o,into,fx){   // 수면: 나갈 때는 그대로 통과(반사 없음), 들어갈 때만 수직 쪽으로 1~2° 꺾임(속도는 그대로)
-  if(into){const sp=Math.hypot(o.vx,o.vy)||1,th=Math.atan2(Math.abs(o.vx),Math.abs(o.vy)),d=Math.min(th,(1+th/(Math.PI/2))*Math.PI/180),t2=th-d;
+function seaCross(o,into,fx,c){   // 수면: 나갈 때는 그대로 통과(반사 없음), 들어갈 때 수직 쪽으로 1~2° 꺾이고 속도가 줄어듦(헤엄치는 동물은 조금만)
+  if(into){const sp=(Math.hypot(o.vx,o.vy)||1)*(c&&c.swim?0.95:0.78),th=Math.atan2(Math.abs(o.vx),Math.abs(o.vy)),d=Math.min(th,(1+th/(Math.PI/2))*Math.PI/180),t2=th-d;
     o.vx=Math.sign(o.vx)*sp*Math.sin(t2);o.vy=Math.sign(o.vy||1)*sp*Math.cos(t2);}
   if(fx)seaFx(o.x,false);
 }
