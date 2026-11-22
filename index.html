@@ -140,7 +140,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v43 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v44 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -264,7 +264,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v43</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v44</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -526,7 +526,7 @@ function hzUpdate(dt){
     if(!host&&e.tx!=null&&ph!=='active')e.x=e.tx;
     for(const d of e.deb){d.a+=dt*8;d.h+=dt*(50+Math.random()*40);d.life-=dt;}e.deb=e.deb.filter(d=>d.life>0&&(ph==='active'||ph==='lift'));
     if(host)for(const u of g.units)if(u.hz&&u.hz.st==='carry'){const c=u.hz;c.cT+=dt;c.ca+=dt*9;const lift=Math.min(1,c.cT/1.0);
-      u.x=clamp(e.x+Math.sin(c.ca)*18*lift,12,W-12);u.y=groundAt(e.x)-lift*95-Math.sin(c.ca*0.5)*6;u.facing=Math.cos(c.ca)>0?1:-1;
+      u.x=clamp(e.x+Math.sin(c.ca)*18*lift,12,W-12);u.y=Math.min(groundAt(e.x),H-40)-lift*95-Math.sin(c.ca*0.5)*6;u.facing=Math.cos(c.ca)>0?1:-1;
       if(c.cT>1.8||ph!=='active'){u.hz={st:'air',vx:(Math.random()<.5?1:-1)*hzR(60,200),vy:-hzR(30,160)};u._hzT=true;}}
     if(ph==='end'&&!g.units.some(u=>u.hz))hzEnd();
   }
@@ -558,7 +558,8 @@ function hzUpdate(dt){
     if(z.st==='swim'){z.vy+=140*dt;z.vx*=Math.pow(0.35,dt);z.vy*=Math.pow(0.5,dt);}else z.vy+=420*dt;
     u.x+=z.vx*dt;u.y+=z.vy*dt;if(u.x<12){u.x=12;z.vx=Math.abs(z.vx)*0.3;}if(u.x>W-12){u.x=W-12;z.vx=-Math.abs(z.vx)*0.3;}
     if(z.st==='swim'){u.y=Math.max(SEA_Y+30,u.y);if(Math.abs(z.vx)>8)u.facing=z.vx>0?1:-1;}
-    const gy=groundAt(u.x);if(u.y>=gy&&z.vy>0){u.y=gy;if(z.st==='air'&&z.vy>260){const d=Math.round((z.vy-260)/25)+3;damage(u,d);g.shakeT=Math.max(g.shakeT||0,0.15);}u.hz=null;u.vy=0;}}
+    const gy=groundAt(u.x);if(gy>H&&u.y>H+15){u.hz=null;u.vy=0;if(u.alive){u.alive=false;u.hp=0;floatText(clamp(u.x,30,W-30),H-30,u.label+' 추락!','#fff');try{sfx.ko();}catch(err){}}continue;}
+    if(u.y>=gy&&z.vy>0){u.y=gy;if(z.st==='air'&&z.vy>260){const d=Math.round((z.vy-260)/25)+3;damage(u,d);g.shakeT=Math.max(g.shakeT||0,0.15);}u.hz=null;u.vy=0;}}
 }
 // ----- 화산: 징조 2초(땅이 부풀고 연기) → 분화(언덕이 솟고 불기둥) → 화산탄 3.5초 → 용암 장판 -----
 function hzVBulge(e,k){for(let i=-40;i<=40;i++){const xx=Math.round(e.x+i);if(xx<0||xx>W)continue;const top=e.base-14*k*Math.pow(1-Math.abs(i)/40,1.5);if(top<g.h[xx])g.h[xx]=top;}}
@@ -2104,7 +2105,7 @@ function update(dt){
   if(!g.remote)updateExtras(dt);
   // 캐릭터 낙하
   for(const v of g.units){
-    if(v.y>H+60)continue;
+    if(v.y>H+60){if(v.alive){v.alive=false;v.hp=0;floatText(clamp(v.x,30,W-30),H-30,v.label+' 추락!','#fff');sfx.ko();}continue;}
     if(v.hz){if(v.throwT>0)v.throwT-=dt;if(v.hurtT>0)v.hurtT-=dt;continue;}
     const gy=groundAt(v.x);
     if(v.y<gy-0.5){v.vy+=G*dt;v.y=Math.min(gy,v.y+v.vy*dt);if(v.y>=gy)v.vy=0;}
