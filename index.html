@@ -141,7 +141,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v46 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.22 v47 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -265,7 +265,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v46</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.22 v47</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -1843,8 +1843,8 @@ function updateProjectile(dt){
   if(p.runner){updateRunner(p,dt);return;}
   if(p.carrier)dt*=0.72;   // 새가 들고 나는 동안은 같은 길을 조금 천천히
   if(p.type==='turtle'&&!p.mini&&p.vy>0&&p.y>groundAt(p.x)-160&&p.y<H){   // 거북: 내려오다 4발로 분열
-    p.mini=true;const vx=p.vx,vy=p.vy,mk=sp=>({x:p.x,y:p.y,vx:vx*0.5+sp*37,vy:vy*0.35-60,type:'turtle',owner:p.owner,boost:p.boost,age:1,spin:Math.random()*6,trail:[],mini:true,dm:11/30,rm:15/28});
-    Object.assign(p,mk(-0.5));p.trail=[];g.extra=(g.extra||[]).concat([mk(-1.5),mk(0.5),mk(1.5)]);g.burstDirect=false;
+    p.mini=true;const vx=p.vx,vy=p.vy,mk=sp=>({x:p.x,y:p.y,vx:vx*0.5+sp*22,vy:vy*0.35-60,type:'turtle',owner:p.owner,boost:p.boost,age:1,spin:Math.random()*6,trail:[],mini:true,dm:8/30,rm:13/28});   // 6발 · 한 발 피해 8
+    Object.assign(p,mk(-0.5));p.trail=[];g.extra=(g.extra||[]).concat([mk(-2.5),mk(-1.5),mk(0.5),mk(1.5),mk(2.5)]);g.burstDirect=false;
     floatText(p.x,p.y-20,'분열!','#DCEDC8');for(let i=0;i<8;i++){const a=i/8*6.28;g.parts.push({kind:'ember',x:p.x,y:p.y,vx:Math.cos(a)*60,vy:Math.sin(a)*60,life:0.3,max:1,color:'#DCEDC8',size:1.5});}try{sfx.throw();}catch(e){}netEv(['s','throw']);}
   const c=CHARS[p.type],steps=4,sdt=dt/steps;
   for(let s=0;s<steps;s++){
@@ -2325,7 +2325,7 @@ function render(){
     if(p.boost){ctx.fillStyle='rgba(255,200,40,.35)';ctx.beginPath();ctx.arc(p.x,p.y,11,0,7);ctx.fill();}
     if(p.runner){drawRunner(p);continue;}
     if(p.carrier||p.diving){drawCarrier(p,!!p.diving);continue;}
-    const mini=p.mini||(p.type==='turtle'&&(g.extra||[]).some(e=>e.type==='turtle'));const L=mini?11:16;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.translate(-L/2,0);drawBottle(ctx,p.type,L);ctx.restore();
+    const mini=p.mini||(p.type==='turtle'&&(g.extra||[]).some(e=>e.type==='turtle'));const L=mini?10:16;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.translate(-L/2,0);drawBottle(ctx,p.type,L);ctx.restore();
   }}
   if(g.claw)drawClaw();
   if(g.imp)drawImpact();
