@@ -141,7 +141,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.23 v53 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.23 v54 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -282,7 +282,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.23 v53</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.23 v54</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -580,7 +580,7 @@ function hzUpdate(dt){
     if(z.st==='swim'){z.vy+=140*dt;z.vx*=Math.pow(0.35,dt);z.vy*=Math.pow(0.5,dt);}else z.vy+=420*dt;
     u.x+=z.vx*dt;u.y+=z.vy*dt;if(u.x<12){u.x=12;z.vx=Math.abs(z.vx)*0.3;}if(u.x>W-12){u.x=W-12;z.vx=-Math.abs(z.vx)*0.3;}
     if(z.st==='swim'){u.y=Math.max(SEA_Y+30,u.y);if(Math.abs(z.vx)>8)u.facing=z.vx>0?1:-1;}
-    const gy=groundAt(u.x);if(gy>H&&u.y>H+15){u.hz=null;u.vy=0;if(u.alive){u.alive=false;u.hp=0;floatText(clamp(u.x,30,W-30),H-30,u.label+' 추락!','#fff');try{sfx.ko();}catch(err){}}continue;}
+    const gy=groundAt(u.x);if(gy>H&&u.y>H+15){u.hz=null;u.vy=0;if(fallSave(u))continue;if(u.alive){u.alive=false;u.hp=0;floatText(clamp(u.x,30,W-30),H-30,u.label+' 추락!','#fff');try{sfx.ko();}catch(err){}}continue;}
     if(u.y>=gy&&z.vy>0){u.y=gy;if(z.st==='air'&&z.vy>260){const d=Math.round((z.vy-260)/25)+3;damage(u,d);g.shakeT=Math.max(g.shakeT||0,0.15);}u.hz=null;u.vy=0;}}
 }
 // ----- 화산: 징조 2초(땅이 부풀고 연기) → 분화(언덕이 솟고 불기둥) → 화산탄 3.5초 → 용암 장판 -----
@@ -701,31 +701,31 @@ const CAMP={
     nodes:[{name:'숲 입구 · 고슴도치 파수꾼',c:['hedgehog'],ai:0,wind:10,say:'가시 파수꾼이 숲 입구를 막고 있다!'},
       {name:'쓰러진 나무다리 · 두더지 형제',c:['mole','mole'],ai:0,wind:16,say:'두더지 형제가 땅속에서 튀어나왔다!'},
       {name:'번개 맞은 고목 · 뇌조왕의 부하들',c:['eagle','bat'],ai:1,wind:22,say:'하늘에서 뇌조왕의 부하들이 내려온다!'},
-      {name:'👑 뇌조왕의 둥지',boss:{type:'eagle',name:'뇌조왕',hp:320,sc:1.6,dmg:1.25,minion:'eagle',hz:'bolt',cry:'천둥이여!'},ai:1,wind:24,say:'뇌조왕: "번개의 힘은 이제 내 것이다! 천둥이여!"'}]},
+      {name:'👑 뇌조왕의 둥지',boss:{type:'eagle',name:'뇌조왕',hp:270,sc:1.6,dmg:1.0,minion:'eagle',hz:'bolt',cry:'천둥이여!'},ai:0,wind:24,say:'뇌조왕: "번개의 힘은 이제 내 것이다! 천둥이여!"'}]},
    {name:'2장 · 모래바람 사막',map:1,icon:'🌪',skill:'tornado',
     nodes:[{name:'모래 언덕 · 뱀 정찰병',c:['snake'],ai:1,wind:18,say:'모래 속에서 뱀 정찰병이 고개를 든다!'},
       {name:'마른 오아시스 · 박쥐 떼',c:['bat','bat'],ai:1,wind:24,say:'말라 버린 오아시스에 박쥐 떼가 몰려든다!'},
       {name:'바람 골짜기 · 하늘과 모래의 협공',c:['eagle','snake'],ai:1,wind:30,say:'바람을 탄 독수리와 모래 속 뱀이 함께 덤빈다!'},
-      {name:'👑 회오리의 눈 · 모래왕뱀',boss:{type:'snake',name:'모래왕뱀',hp:380,sc:1.6,dmg:1.25,minion:'snake',hz:'tornado',cry:'모래 회오리여, 일어나라!'},ai:1,wind:30,say:'모래왕뱀: "바람은 나의 것! 모두 날려 주마!"'}]},
+      {name:'👑 회오리의 눈 · 모래왕뱀',boss:{type:'snake',name:'모래왕뱀',hp:320,sc:1.6,dmg:1.05,minion:'snake',hz:'tornado',cry:'모래 회오리여, 일어나라!'},ai:1,wind:30,say:'모래왕뱀: "바람은 나의 것! 모두 날려 주마!"'}]},
    {name:'3장 · 흔들리는 설원',map:2,icon:'⛰',skill:'quake',
     nodes:[{name:'얼음 들판 · 물범 보초',c:['seal','seal'],ai:1,wind:16,say:'얼음 위에서 물범 보초들이 미끄러져 온다!'},
       {name:'눈 동굴 · 두더지 굴착대',c:['mole','mole','hedgehog'],ai:1,wind:20,say:'눈 동굴 곳곳에서 굴착대가 솟아오른다!'},
       {name:'빙하 절벽 · 호랑이와 코끼리',c:['tiger','elephant'],ai:2,wind:24,say:'빙하 절벽을 지키는 맹수들이 길을 막는다!'},
-      {name:'👑 빙하 꼭대기 · 빙하 코끼리왕',boss:{type:'elephant',name:'빙하 코끼리왕',hp:450,sc:1.55,dmg:1.3,minion:'mole',hz:'quake',cry:'땅이여, 갈라져라!'},ai:2,wind:24,say:'빙하 코끼리왕: "쿵! 쿵! 이 땅을 부숴 주마!"'}]},
+      {name:'👑 빙하 꼭대기 · 빙하 코끼리왕',boss:{type:'elephant',name:'빙하 코끼리왕',hp:380,sc:1.55,dmg:1.1,minion:'mole',hz:'quake',cry:'땅이여, 갈라져라!'},ai:1,wind:24,say:'빙하 코끼리왕: "쿵! 쿵! 이 땅을 부숴 주마!"'}]},
    {name:'4장 · 불타는 협곡',map:4,icon:'🌋',skill:'volcano',
     nodes:[{name:'붉은 절벽 · 가시 형제',c:['hedgehog','hedgehog'],ai:1,wind:20,say:'달궈진 가시를 세운 형제가 절벽 위에 섰다!'},
       {name:'흔들다리 · 하늘의 감시자',c:['bat','eagle'],ai:2,wind:26,say:'흔들다리 위로 감시자들이 날아든다!'},
       {name:'용암 동굴 입구 · 문지기',c:['turtle','snake','hedgehog'],ai:2,wind:28,say:'용암 동굴의 문지기들이 앞을 가로막는다!'},
-      {name:'👑 용암 호수 · 용암거북',boss:{type:'turtle',name:'용암거북',hp:520,sc:1.55,dmg:1.3,minion:'hedgehog',hz:'volcano',cry:'불길이여, 솟아라!'},ai:2,wind:28,say:'용암거북: "이 등껍질의 불꽃을 맛보아라!"'}]},
+      {name:'👑 용암 호수 · 용암거북',boss:{type:'turtle',name:'용암거북',hp:440,sc:1.55,dmg:1.1,minion:'hedgehog',hz:'volcano',cry:'불길이여, 솟아라!'},ai:1,wind:28,say:'용암거북: "이 등껍질의 불꽃을 맛보아라!"'}]},
    {name:'5장 · 깊은 바다',map:5,icon:'🌊',skill:'water',
     nodes:[{name:'산호초 · 흰동가리 떼',c:['clownfish','clownfish'],ai:1,wind:0,say:'산호초 사이에서 흰동가리 떼가 튀어나온다!'},
       {name:'난파선 · 물범 해적',c:['seal','clownfish'],ai:2,wind:0,say:'난파선을 차지한 물범 해적이 덤벼든다!'},
       {name:'심해 골짜기 · 바다의 수호자',c:['seal','turtle','clownfish'],ai:2,wind:0,say:'깊은 골짜기의 수호자들이 몰려온다!'},
-      {name:'👑 산호 궁전 · 해일 물범왕',boss:{type:'seal',name:'해일 물범왕',hp:580,sc:1.6,dmg:1.3,minion:'clownfish',hz:'tsunami',cry:'바다여, 일어나라!'},ai:2,wind:0,say:'해일 물범왕: "바다가 너를 삼킬 것이다!"'}]},
+      {name:'👑 산호 궁전 · 해일 물범왕',boss:{type:'seal',name:'해일 물범왕',hp:490,sc:1.6,dmg:1.15,minion:'clownfish',hz:'tsunami',cry:'바다여, 일어나라!'},ai:2,wind:0,say:'해일 물범왕: "바다가 너를 삼킬 것이다!"'}]},
    {name:'종장 · 일식의 정글',map:3,icon:'🌑',final:true,
     nodes:[{name:'어둠의 늪 · 그림자 졸개',c:['bat','snake'],ai:2,wind:24,say:'늪의 어둠 속에서 그림자 졸개들이 기어 나온다!'},
       {name:'그림자 숲 · 마지막 문지기',c:['tiger','eagle','bat'],ai:2,wind:28,say:'그림자에 물든 맹수들이 마지막 길을 막는다!'},
-      {name:'👑 일식의 제단 · 그림자 박쥐왕',boss:{type:'bat',name:'그림자 박쥐왕',hp:760,sc:1.8,dmg:1.35,minion:'bat',hz:'mix',cry:'모든 재앙이여, 깨어나라!'},ai:2,wind:30,say:'그림자 박쥐왕: "정령의 힘은 모두 내 것이었다! 일식이여, 영원하라!"'}]}]
+      {name:'👑 일식의 제단 · 그림자 박쥐왕',boss:{type:'bat',name:'그림자 박쥐왕',hp:640,sc:1.8,dmg:1.2,minion:'bat',hz:'mix',cry:'모든 재앙이여, 깨어나라!'},ai:2,wind:30,say:'그림자 박쥐왕: "정령의 힘은 모두 내 것이었다! 일식이여, 영원하라!"'}]}]
 };
 const SKILLS={bolt:{n:'⚡ 낙뢰 소환',hz:'bolt',d:'가장 가까운 적에게 번개'},tornado:{n:'🌪 회오리 소환',hz:'tornado',d:'가장 가까운 적 자리에 회오리'},quake:{n:'⛰ 지진 일으키기',hz:'quake',d:'가장 가까운 적 발밑에 지진'},
   volcano:{n:'🌋 화산 분출',hz:'volcano',d:'가장 가까운 적 옆에 화산'},water:{n:'💧 치유의 샘',heal:0.4,d:'내 체력 40% 회복'}};
@@ -767,7 +767,9 @@ function campSetup(st){   // startStage 안에서: 적 종류·보스·내 능�
   if(n.boss){const b=C[0],B=n.boss;b.type=B.type;b.hp=b.maxHp=B.hp;b.sc=B.sc;b.boss=B;b.label=B.name;b.dmgMul=B.dmg;b.color='#FFD54F';g.noHz=true;}
   else C.forEach((u,k)=>{const t=n.c[k]||u.type;u.type=t;u.hp=u.maxHp=CHARS[t].hp;});
   const p=g.units.find(u=>u.team==='p'),cd=c.cards;
-  p.maxHp+=15*(cd.hp||0);p.hp=p.maxHp;p.spdMul=1+0.06*(cd.pow||0);p.radMul=1+0.12*(cd.rad||0);p.windMul=Math.pow(0.75,cd.wind||0);p.dmgMul=1+0.1*(cd.dmg||0);
+  const lvB=6*(campLv(c.xp)-1),fk=(st.ch||0)+'-'+st.idx,fl=Math.min(3,(c.fails||{})[fk]||0);
+  p.maxHp=Math.round((p.maxHp+15*(cd.hp||0)+lvB)*(1+0.15*fl));p.hp=p.maxHp;g.story.cheer=fl;g.herbUsed=false;
+  if(fl)later(2600,()=>banner(`💪 응원 버프! 다시 도전해서 체력 +${fl*15}%`));p.spdMul=1+0.06*(cd.pow||0);p.radMul=1+0.12*(cd.rad||0);p.windMul=Math.pow(0.75,cd.wind||0);p.dmgMul=1+0.1*(cd.dmg||0);
   for(const u of g.units)u.y=groundAt(u.x);
   later(300,()=>banner(n.say));}
 function campEnd(win){
@@ -775,13 +777,14 @@ function campEnd(win){
   let stars=0;if(win){stars=1;if(me&&me.hp>=me.maxHp*0.7)stars++;if(s.myTurns<=5)stars++;}
   const gain=Math.round(s.xp)+(win?30:10),lv0=campLv(c.xp);c.xp+=gain;const lv1=campLv(c.xp);
   const v=s.ch||0,L=CAMP.ch.length;
+  c.fails=c.fails||{};const fk=v+'-'+i;if(win)delete c.fails[fk];else c.fails[fk]=Math.min(3,(c.fails[fk]||0)+1);
   if(win){const key=v+'-'+i;c.stars[key]=Math.max(c.stars[key]||0,stars);if(v===c.ch&&i===c.node)c.node++;}
   const bossWin=win&&s.node.boss&&v===c.ch;if(bossWin){const sk=CAMP.ch[v].skill;if(sk&&!c.skills.includes(sk))c.skills.push(sk);c.ch++;c.node=0;c.view=Math.min(c.ch,L-1);}
   campSet(c);
   later(1400,()=>{show('result');const btns=$('resBtns');btns.innerHTML='';
     const add=(t,fn,pri)=>{const b=document.createElement('button');b.className='b'+(pri?' pri':'');b.textContent=t;b.addEventListener('click',fn);btns.appendChild(b);};
     $('resTitle').textContent=win?`🎉 ${s.node.name} 클리어! ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}`:'패배… 다시 도전하세요';
-    $('resMsg').innerHTML=`경험치 +${gain} (준 피해 ${Math.round(s.xp)} + ${win?'승리 30':'참가 10'})`+(win?`<br>★ 승리 · ${stars>=2||(me&&me.hp>=me.maxHp*0.7)?'★':'☆'} 체력 70% 이상 남김 · ${s.myTurns<=5?'★':'☆'} 내 차례 5번 안에 승리`:'')+(lv1>lv0?`<br>⬆ 레벨 ${lv1}! 능력 카드를 고르세요`:'');
+    $('resMsg').innerHTML=`경험치 +${gain} (준 피해 ${Math.round(s.xp)} + ${win?'승리 30':'참가 10'})`+(win?`<br>★ 승리 · ${stars>=2||(me&&me.hp>=me.maxHp*0.7)?'★':'☆'} 체력 70% 이상 남김 · ${s.myTurns<=5?'★':'☆'} 내 차례 5번 안에 승리`:'')+(lv1>lv0?`<br>⬆ 레벨 ${lv1}! 능력 카드를 고르세요`:'')+(!win?`<br>💪 다시 도전하면 응원 버프로 체력 +${Math.min(3,c.fails[fk])*15}%`:'');
     const next=()=>{if(lv1>lv0)campCards(lv1-lv0,after);else after();};
     const after=()=>{if(bossWin)playCine(['ch'+(v+1)+'win'].concat(v+1<L?['ch'+(v+2)]:[]),openCamp);else openCamp();};
     add(lv1>lv0?'능력 카드 고르기':'계속',next,true);if(!win)add('바로 다시',()=>{campStart(i);});});}
@@ -792,14 +795,18 @@ function campCards(n,done){hideAll();show('cardPick');const pool=CARDS.slice().s
 // 보스 행동: 번개 → 공격, 체력 50% 아래면 졸개 부르기 + 매 턴 번개
 function bossPre(u){const B=u.boss;if(!B||u._acted)return false;u._acted=true;const half=u.hp<=u.maxHp*0.5;u._bt=(u._bt||0)+1;
   if(half&&!u._sum&&B.minion){u._sum=true;const m=mkUnit('c',B.minion,1,clamp(u.x+(u.x>W/2?-70:70),30,W-30));m.hp=m.maxHp=60;m.label='부하';m.y=groundAt(m.x);g.units.push(m);floatText(m.x,m.y-60,'부하 등장!','#FFD54F');banner(`${u.label}: "나와라, 부하들아!"`);}
-  if(half||u._bt%2===0){const t=aliveOf('p')[0];if(!t)return false;g.phase='between';
+  if(u._bt%(half?2:3)===0){const t=aliveOf('p')[0];if(!t)return false;g.phase='between';
     let hz=B.hz||'bolt';if(hz==='mix'){const o=['bolt','tornado','quake','volcano'];hz=o[(u._bt>>1)%o.length];}
     if(hz==='tsunami'&&!MAPS[g.mi].sea)hz='quake';
-    const tx=hz==='volcano'?clamp(Math.round(t.x+(t.x>W/2?-45:45)),70,W-70):Math.round(t.x);
+    const sp=(Math.random()<0.5?-1:1)*(25+Math.random()*45);   // 빗나감 폭: 바로 위 직격 대신 근처
+    const tx=hz==='volcano'?clamp(Math.round(t.x+(t.x>W/2?-90:90)),70,W-70):clamp(Math.round(t.x+sp),30,W-30);
     hzBegin(hz,()=>{if(g&&g.cur===u&&u.alive&&g.phase!=='over'){if(checkEnd())return;later(400,()=>aiTurn(u));}},tx);
     banner(`${u.label}: "${half?'분노의 ':''}${B.cry||'천둥이여!'}" ${{bolt:'⚡ 낙뢰',tornado:'🌪 회오리',quake:'⛰ 지진',volcano:'🌋 화산',tsunami:'🌊 해일'}[hz]}`);return true;}
   return false;}
-// 필살기: 낙뢰 소환 (내 차례에 1번, 가장 가까운 적)
+// 약초: 캠페인 전투마다 1번, 차례를 쓰지 않고 체력 30% 회복
+function useHerb(){const u=g.cur;if(!g.story||g.herbUsed||!u||u.ai||g.phase!=='aim'||g.fired)return;const a=Math.min(u.maxHp-u.hp,Math.round(u.maxHp*0.3));g.herbUsed=true;u.hp+=a;
+  floatText(u.x,u.y-60,'+'+a,'#B9F6CA');banner(`🍀 약초! 체력 +${a}`);for(let i=0;i<18;i++){const an=-Math.PI*Math.random();g.parts.push({kind:'drop',x:u.x+(Math.random()-0.5)*30,y:u.y-20,vx:Math.cos(an)*50,vy:Math.sin(an)*110,life:0.9,max:0.9,color:i%2?'#69F0AE':'#CCFF90'});}updateBar();}
+// 필살기 (내 차례에 1번, 가장 가까운 적)
 function useSkill(k){const u=g.cur;if(!g.story||g.skillUsed||!u||u.ai||g.phase!=='aim'||g.fired)return;const S=SKILLS[k];if(!S||!campGet().skills.includes(k))return;g.skillMenu=false;
   if(S.heal){const a=Math.min(u.maxHp-u.hp,Math.round(u.maxHp*S.heal));g.skillUsed=true;u.hp+=a;floatText(u.x,u.y-60,'+'+a,'#80DEEA');banner(`💧 치유의 샘! 체력 +${a}`);
     for(let i=0;i<24;i++){const an=-Math.PI*Math.random();g.parts.push({kind:'drop',x:u.x+(Math.random()-0.5)*30,y:u.y-20,vx:Math.cos(an)*60,vy:Math.sin(an)*120,life:0.9,max:0.9,color:i%2?'#80DEEA':'#E1F5FE'});}
@@ -1692,6 +1699,10 @@ function genCanyon(seed){
 }
 // 동물 자리: 바위 턱 > 기둥 바위 > 가운데 > 꼭대기 순서로
 const SPOT_PREF={over:0,ledge:1,butte:2,center:3,mesa:4};
+// 캠페인: 낭떠러지로 떨어지면 전투마다 1번 정령이 가까운 땅으로 구해 줌 (체력 -15)
+function fallSave(u){if(!(g&&g.story&&u.team==='p'&&u.alive&&!u._saved&&u.hp>15))return false;let best=null;
+  for(let x=40;x<=W-40;x+=6){const gy=groundAt(x);if(gy<H-20){const d=Math.abs(x-u.x);if(!best||d<best.d)best={x,d};}}if(!best)return false;
+  u._saved=true;u.x=best.x;u.y=groundAt(best.x);u.vy=0;u.vx=0;u.hz=null;u.hp=Math.max(1,u.hp-15);floatText(u.x,u.y-70,'🕊 정령이 구해 줌! -15','#B3E5FC');banner('🕊 정령이 낭떠러지에서 구해 주었습니다 (전투마다 1번)');return true;}
 function canyonSpots(spots,side){return spots.filter(s=>side==null||(side<0?s.x<W/2:s.x>W/2)).sort((a,b)=>SPOT_PREF[a.k]-SPOT_PREF[b.k]);}
 function shuf(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}   // 자리 무작위(배치도 운)
 function spotX(s,r){return Math.round(s.x+(r()-0.5)*6);}
@@ -2581,12 +2592,12 @@ function update(dt){
   if(!g.remote)updateExtras(dt);
   // 캐릭터 낙하
   for(const v of g.units){
-    if(v.y>H+60){if(v.alive){v.alive=false;v.hp=0;floatText(clamp(v.x,30,W-30),H-30,v.label+' 추락!','#fff');sfx.ko();}continue;}
+    if(v.y>H+60){if(fallSave(v))continue;if(v.alive){v.alive=false;v.hp=0;floatText(clamp(v.x,30,W-30),H-30,v.label+' 추락!','#fff');sfx.ko();}continue;}
     if(v.hz){if(v.throwT>0)v.throwT-=dt;if(v.hurtT>0)v.hurtT-=dt;continue;}
     const gy=groundAt(v.x);
     if(v.y<gy-0.5){v.vy+=G*dt;v.y=Math.min(gy,v.y+v.vy*dt);if(v.y>=gy)v.vy=0;}
     else{v.y=gy;v.vy=0;}
-    if(v.alive&&v.y>H+15){v.alive=false;v.hp=0;floatText(clamp(v.x,30,W-30),H-30,v.label+' 추락!','#fff');sfx.ko();}
+    if(v.alive&&v.y>H+15&&!fallSave(v)){v.alive=false;v.hp=0;floatText(clamp(v.x,30,W-30),H-30,v.label+' 추락!','#fff');sfx.ko();}
     if(v.throwT>0)v.throwT-=dt;if(v.hurtT>0)v.hurtT-=dt;
   }
   }
@@ -2961,6 +2972,8 @@ function updateBar(){
   if(!human){box.innerHTML=`<div class="cpu">${g.phase==='over'?'':(u.ai?'컴퓨터':u.label)+' 차례'}</div>`;return;}
   const list=[['bomb','파워업','위력 +30%'],['penalty','유도탄','반드시 명중'],['triple','2연속','2발 자동']];
   const hc=CHARS[u.type].heal;if(hc)list.push(['heal',hc.name,'체력 +'+Math.round(hc.pct*100)+'%']);
+  if(g.story&&!g.skillMenu){const b=document.createElement('button');b.className='ib heal';b.innerHTML=`🍀 약초<small>${g.herbUsed?'사용함':'체력 30% · 1번'}</small>`;b.disabled=!!g.herbUsed||!aim||g.fired;
+    b.addEventListener('pointerdown',e=>{e.preventDefault();sfx.unlock();useHerb();});box.appendChild(b);}
   const sks=g.story?campGet().skills.filter(k=>SKILLS[k]):[];
   if(sks.length){   // 필살기: 버튼 하나 → 누르면 배운 필살기 목록
     if(g.skillMenu&&aim&&!g.skillUsed){sks.forEach(k=>{const b=document.createElement('button');b.className='ib heal';b.innerHTML=`${SKILLS[k].n}<small>${SKILLS[k].d}</small>`;b.addEventListener('pointerdown',e=>{e.preventDefault();sfx.unlock();useSkill(k);});box.appendChild(b);});
@@ -4025,7 +4038,7 @@ if(window.SBF_ASSETS)applyAssets(window.SBF_ASSETS);
 setTimeout(loadDeco,600);
 resize();openTitle();requestAnimationFrame(frame);
 if(!Object.keys(REAL.chars).length){idbGet('assets').then(t=>{if(t){try{if(applyAssets(JSON.parse(t))&&!g&&!$('title').classList.contains('hide'))renderPhotoRow();}catch(e){}}});}
-window.__sbf={get g(){return g;},startStage,useItem,fireShot,aiTurn,endStage,sfx,bgm,carve,inWater,physStep,impactLocal,mus,bgm,damage,openCamp,playCine,drawReal,CAMP,cineI:()=>cine&&cine.i,campStart,campGet,useSkill,hzBegin,hzRoll,effAngle,nextTurn,settings};
+window.__sbf={get g(){return g;},startStage,useHerb,useItem,fireShot,aiTurn,endStage,sfx,bgm,carve,inWater,physStep,impactLocal,mus,bgm,damage,openCamp,playCine,drawReal,CAMP,cineI:()=>cine&&cine.i,campStart,campGet,useSkill,hzBegin,hzRoll,effAngle,nextTurn,settings};
 })();
 </script>
 </body>
