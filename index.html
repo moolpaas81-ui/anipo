@@ -141,7 +141,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.23 v52 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.23 v53 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -177,7 +177,7 @@ body.port .cpu{flex:1;text-align:center}
   <p style="margin:6px 0 2px">출전할 동물</p><div class="row" id="cpAnimals"></div>
   <div class="row"><button class="b sm" id="cpStory">📜 이야기 다시 보기</button><button class="b sm" id="cpReset">처음부터</button><button class="b" id="cpBack">처음 화면</button></div>
 </div></div>
-<div class="ov hide" id="cards"><div class="panel" style="max-width:520px"><h2 id="cdTitle"></h2><div id="cdBox"></div></div></div>
+<div class="ov hide" id="cardPick"><div class="panel" style="max-width:520px"><h2 id="cdTitle"></h2><div id="cdBox"></div></div></div>
 <div class="ov hide" id="select"><div class="panel">
   <h2 id="selTitle">캐릭터 선택</h2>
   <p id="selInfo"></p>
@@ -282,7 +282,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.23 v52</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.23 v53</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -785,7 +785,7 @@ function campEnd(win){
     const next=()=>{if(lv1>lv0)campCards(lv1-lv0,after);else after();};
     const after=()=>{if(bossWin)playCine(['ch'+(v+1)+'win'].concat(v+1<L?['ch'+(v+2)]:[]),openCamp);else openCamp();};
     add(lv1>lv0?'능력 카드 고르기':'계속',next,true);if(!win)add('바로 다시',()=>{campStart(i);});});}
-function campCards(n,done){hideAll();show('cards');const pool=CARDS.slice().sort(()=>Math.random()-0.5).slice(0,3),box=$('cdBox');box.innerHTML='';
+function campCards(n,done){hideAll();show('cardPick');const pool=CARDS.slice().sort(()=>Math.random()-0.5).slice(0,3),box=$('cdBox');box.innerHTML='';
   $('cdTitle').textContent=`⬆ 레벨 업! 능력 카드 1장 고르기${n>1?` (${n}장 남음)`:''}`;
   pool.forEach(k=>{const b=document.createElement('button');b.className='b';b.style.cssText='display:block;width:100%;margin:6px 0;padding:12px;font-size:16px';b.innerHTML=`${k.n}<br><small>${k.d}</small>`;
     b.onclick=()=>{const c=campGet();c.cards[k.k]=(c.cards[k.k]||0)+1;campSet(c);if(n>1)campCards(n-1,done);else done();};box.appendChild(b);});}
@@ -3039,7 +3039,7 @@ window.addEventListener('keyup',e=>{
 window.addEventListener('blur',()=>{inp.left=inp.right=inp.up=inp.down=false;});
 
 // ---------- 화면 전환 ----------
-const OVS=['title','select','help','pause','result','lobby','scan','qrBig','story','camp','cards','cine'];
+const OVS=['title','select','help','pause','result','lobby','scan','qrBig','story','camp','cardPick','cine'];
 $('cpBack').addEventListener('click',openTitle);$('cpStory').addEventListener('click',()=>{sfx.unlock();playCine(campCineKeys(campView(campGet())),openCamp);});
 $('cpReset').addEventListener('click',e=>{if(!e.target.dataset.sure){e.target.dataset.sure=1;e.target.textContent='정말 처음부터?';return;}store.set('camp',null);openCamp();});
 function hideAll(){OVS.forEach(id=>$(id).classList.add('hide'));}
@@ -3056,7 +3056,7 @@ function openTitle(){
   });
   const rb=$('runBtns');rb.innerHTML='';const run=store.get('run',null);
   const addR=(t,fn,pri)=>{const b=document.createElement('button');b.className='b big'+(pri?' pri':'');b.innerHTML=t;b.addEventListener('click',()=>{sfx.unlock();fn();});rb.appendChild(b);};
-  addR(`📖 스토리 캠페인<small>다섯 정령의 시련 · 1장 샘플</small>`,openCamp,true);
+  addR(`📖 스토리 캠페인<small>다섯 정령의 시련 · 1장~종장</small>`,openCamp,true);
   if(run)addR(`▶ 이어하기<small>STAGE ${run.stage+1} · 목숨 ${hearts(run.lives)}</small>`,()=>openSelect(run.stage,true));
   addR(`🐾 빠른 대결<small>5단계 · 목숨 ${hearts(MAX_LIVES)}</small>`,()=>{
     if(run&&!confirmNew())return;
