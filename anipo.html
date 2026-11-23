@@ -141,7 +141,7 @@ body.port .cpu{flex:1;text-align:center}
 
 <div class="ov" id="title"><div class="panel">
   <h1>🐾 Safari War</h1>
-  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.23 v54 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
+  <p style="margin:-6px 0 2px;font-size:11px;color:#6f7b90">버전 2026.11.23 v55 · 함께 할 폰은 모두 같은 버전이어야 연결됩니다</p>
   <p>독수리·코끼리·고슴도치·두더지·거북이·박쥐·뱀·호랑이·물개·흰동가리 — 동물 특기로 포탄을 쏘아 상대를 쓰러뜨리세요</p>
   <p style="color:#8f9bb0">혼자하기: 내 동물 1마리 vs 컴퓨터 · 5단계 · 야외·바다 맵 6종 · 인터넷 없이 실행</p>
   <div class="row"><span id="runBtns" style="display:contents"></span><button class="b big" id="btnMP" style="background:#1E4E8C">👥 같이하기<small>같은 와이파이 2~4인</small></button><button class="b big" id="btnPractice">🎯 연습모드<small>목숨 줄지 않음</small></button></div>
@@ -149,6 +149,8 @@ body.port .cpu{flex:1;text-align:center}
   <div class="row">
     <button class="b" id="btnHelp">게임 방법</button>
     <button class="b" id="btnFull">전체 화면</button>
+    <button class="b" id="btnOffline">📥 인터넷 없이 하는 파일</button>
+    <p id="offMsg" style="color:#9be7c4;font-size:12px;margin:4px 0 0"></p>
   </div>
   <div class="row" id="photoRow"></div>
   <p id="photoMsg" style="color:#9be7c4"></p>
@@ -282,7 +284,7 @@ body.port .cpu{flex:1;text-align:center}
     <div class="row"><button class="b pri" id="lbHost">방 만들기 (호스트)</button><button class="b" id="lbJoin">방 참가</button><button class="b sm" id="lbBack">뒤로</button></div>
   </div>
   <div id="lbRoom" style="display:none">
-    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.23 v54</p>
+    <p id="lbStatus" style="color:#FFD54F;font-weight:700"></p><p style="margin:-4px 0 4px;font-size:11px;color:#6f7b90">버전 2026.11.23 v55</p>
     <div class="row" id="lbPlayers"></div>
     <div id="lbAuto" style="background:#11151c;border-radius:10px;padding:4px 6px;margin:4px 0"></div>
     <p style="margin:2px 0 0">내 동물</p>
@@ -412,6 +414,7 @@ function applyDeco(D){if(!D||!D.deco)return false;const R={k:{},tex:{}};
   DECO=R;DECO_JSON=D;if(REAL_JSON)REAL_JSON.decoPack=D;return true;}
 async function loadDeco(){
   if(DECO)return;
+  if(window.SBF_DECO&&applyDeco(window.SBF_DECO))return;   // 오프라인 파일에 넣어 둔 나무·바위 사진
   try{const t=await idbGet('deco');if(t&&applyDeco(JSON.parse(t)))return;}catch(e){}
   if(navigator.onLine===false)return;
   try{const r=await fetch(DECO_URL,{cache:'no-store'});if(!r.ok)return;const t=await r.text();if(applyDeco(JSON.parse(t)))idbPut('deco',t);}catch(e){}
@@ -3129,6 +3132,17 @@ bindOpt('optShake','shake');bindOpt('optSound','sound');bindOpt('optShake2','sha
 ['optMusic','optMusic2'].forEach(id=>$(id).addEventListener('change',e=>{settings.music=e.target.checked;store.set('music',settings.music);$('optMusic').checked=$('optMusic2').checked=settings.music;if(settings.music)bgm.start();else bgm.stop();}));
 $('btnHelp').addEventListener('click',()=>{helpReturn='title';hideAll();show('help');});
 $('helpClose').addEventListener('click',()=>{$('help').classList.add('hide');show(helpReturn);});
+// 인터넷 없이 하는 파일: 나무·바위 실사 사진까지 넣은 html 한 개를 저장
+async function saveOffline(){const m=$('offMsg');m.textContent='나무·바위 사진을 준비하는 중입니다…';
+  if(!DECO_JSON){await loadDeco();}
+  if(!DECO_JSON){m.textContent='나무·바위 사진을 받지 못했습니다. 인터넷에 연결된 상태에서 다시 눌러 주세요.';return;}
+  const tag='<script>window.SBF_DECO='+JSON.stringify(DECO_JSON)+';<\/script>\n';
+  const i=SRC_HTML.indexOf('<scr'+'ipt>\n(()=>{');if(i<0){m.textContent='파일을 만들지 못했습니다.';return;}
+  const html=SRC_HTML.slice(0,i)+(window.SBF_DECO?'':tag)+SRC_HTML.slice(i);
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download='Safari_War_오프라인.html';document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},3000);
+  m.textContent='"Safari_War_오프라인.html"을 저장했습니다. 이 파일은 인터넷 없이 혼자하기·캠페인·연습을 실사로 할 수 있습니다. (같이하기는 인터넷 필요)';}
+$('btnOffline').addEventListener('click',()=>{sfx.unlock();saveOffline();});
 $('btnFull').addEventListener('click',()=>{
   const el=document.documentElement;
   try{(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}
